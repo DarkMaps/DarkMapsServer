@@ -26,6 +26,8 @@ You will most likely want to connect to an external database such as Amazon RDS.
 
 ## API Documentation
 
+Note: Where the device registrationId is sent to the server it is always the transmitting user's registration ID, no the recipient.
+
 ### User Management
 
 **/auth/users POST**
@@ -46,10 +48,14 @@ Returns a JWT allowing access to the service. This is the only way to access the
 }
 ```
 
+**/auth/users/me DELETE**
+Deletes a user and all their associated data. Requires JWT authentication.
+
 ### Devices
 
-**/device POST**
-Create a new device. Require JWT authentication.
+**/device/<deviceRegistrationID> POST**
+Create a new device. Requires JWT authentication.
+Body:
 ```
 {
 	address: <String>,
@@ -69,24 +75,54 @@ Create a new device. Require JWT authentication.
 }
 ```
 
-**/device DELETE**
+**/device/<deviceRegistrationID> DELETE**
 Deletes a device. Requires JWT authentication
 
 
 ### Messages
 
-**/messages/localRegistrationId POST**
+**/messages/<deviceRegistrationID> POST**
+Sends a new message. Requires JWT authentication.
+Body:
+```
+{
+	recipient: <String>,
+	message: <String>
+}
+```
 
-**/messages/localRegistrationId GET**
+**/messages/<deviceRegistrationID> GET**
+Gets all outstanding messages for a user. Requires JWT authentication.
 
-**/messages/localRegistrationId DELETE**
+**/messages/<deviceRegistrationID> DELETE**
+Deletes a message owned by the user. Requires JWT authentication.
 
 ## Keys
 
-**/prekeybundle/{recipientUsername}/{localRegistrationId} POST**
+**/prekeybundle/<recipientUsername>/<deviceRegistrationID> GET**
+Gets a prekey bundle in anticipation of sending an initial message. Requires JWT authentication.
 
-**prekeys/localRegistrationId**
+**prekeys/<deviceRegistrationID> POST**
+Send a list of new prekeys to the server. Requires JWT authentication.
+Body:
+```
+[
+	{
+		keyId: <Integer>,
+		publicKey: <String>
+	}
+]
+```
 
-**signedprekey/localRegistrationId**
+**signedprekey/<deviceRegistrationID> POST**
+Send a new signed prekey to the server. Requires JWT authentication.
+Body:
+```
+{
+	keyId: <Integer>,
+	publicKey: <String>,
+	signature: <String>
+}
+```
 
 
