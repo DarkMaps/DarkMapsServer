@@ -3,6 +3,19 @@
 
 This repository contains a simple server providing REST API calls to manage a messaging service using signal protocol encryption. It allows for storage and retrieval of all required keys, as well as the encrypted messages.
 
+## Local Development
+Local development using sqlite can easily be initiated using:
+```
+./server/development.sh
+```
+
+**Note:** This requires the python environment to have been correctly set up previously, typically using a virtual environment. For example:
+```
+virtualenv -p python3 .env
+source .env/bin/activate
+pip install -r requirements.txt
+```
+
 ## Starting the server using docker swarm
 A simple docker compose file is provided for example usage. This creates a simple entwork with a single instance of the container and a mysql database. The API is available on port 8000.
 ```
