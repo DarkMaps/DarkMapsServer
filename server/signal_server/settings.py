@@ -159,3 +159,8 @@ SIMPLE_JWT = {
 
 # Only using REST framework, therefore safe
 CORS_ORIGIN_ALLOW_ALL = True
+
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': 'auth/password/reset/confirm{uid}/{token}',
+    'TOKEN_MODEL': None
+}

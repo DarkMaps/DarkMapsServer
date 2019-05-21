@@ -64,6 +64,14 @@ Returns a JWT allowing access to the service. This is the only way to access the
 **/auth/users/me DELETE**
 Deletes a user and all their associated data. Requires JWT authentication.
 
+**/auth/password/reset POST**
+Allows user to reset password.
+```
+{
+	email: <String>
+}
+```
+
 ### Devices
 
 **/device/<deviceRegistrationID> POST**
