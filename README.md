@@ -48,6 +48,7 @@ Note: Where the device registrationId is sent to the server it is always the tra
 Creates a new user.
 ```
 {
+	email: <String>,
     username: <String>,
     password: <String>
 }
