@@ -43,7 +43,7 @@ Note: Where the device registrationId is sent to the server it is always the tra
 
 ### User Management
 
-- **/auth/users POST**
+**/auth/users POST**
 
 Creates a new user.
 ```
@@ -53,7 +53,7 @@ Creates a new user.
 }
 ```
 
-- **/auth/jwt/create POST**
+**/auth/jwt/create POST**
 
 Returns a JWT allowing access to the service. This is the only way to access the other API points
 ```
@@ -63,11 +63,11 @@ Returns a JWT allowing access to the service. This is the only way to access the
 }
 ```
 
-- **/auth/users/me DELETE**
+**/auth/users/me DELETE**
 
 Deletes a user and all their associated data. Requires JWT authentication.
 
-- **/auth/password/reset POST**
+**/auth/password/reset POST**
 
 Allows user to reset password.
 ```
@@ -78,7 +78,7 @@ Allows user to reset password.
 
 ### Devices
 
-- **/device/<deviceRegistrationID> POST**
+**/device/<deviceRegistrationID> POST**
 
 Create a new device. Requires JWT authentication.
 Body:
@@ -101,14 +101,14 @@ Body:
 }
 ```
 
-- **/device/<deviceRegistrationID> DELETE**
+**/device/<deviceRegistrationID> DELETE**
 
 Deletes a device. Requires JWT authentication
 
 
 ### Messages
 
-- **/messages/<deviceRegistrationID> POST**
+**/messages/<deviceRegistrationID> POST**
 
 Sends a new message. Requires JWT authentication.
 Body:
@@ -119,21 +119,21 @@ Body:
 }
 ```
 
-- **/messages/<deviceRegistrationID> GET**
+**/messages/<deviceRegistrationID> GET**
 
 Gets all outstanding messages for a user. Requires JWT authentication.
 
-- **/messages/<deviceRegistrationID> DELETE**
+**/messages/<deviceRegistrationID> DELETE**
 
 Deletes a message owned by the user. Requires JWT authentication.
 
 ## Keys
 
-- **/prekeybundle/<recipientUsername>/<deviceRegistrationID> GET**
+**/prekeybundle/<recipientUsername>/<deviceRegistrationID> GET**
 
 Gets a prekey bundle in anticipation of sending an initial message. Requires JWT authentication.
 
-- **prekeys/<deviceRegistrationID> POST**
+**prekeys/<deviceRegistrationID> POST**
 
 Send a list of new prekeys to the server. Requires JWT authentication.
 Body:
@@ -146,7 +146,7 @@ Body:
 ]
 ```
 
-- **signedprekey/<deviceRegistrationID> POST**
+**signedprekey/<deviceRegistrationID> POST**
 
 Send a new signed prekey to the server. Requires JWT authentication.
 Body:
