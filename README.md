@@ -49,7 +49,6 @@ Creates a new user.
 ```
 {
 	email: <String>,
-    username: <String>,
     password: <String>
 }
 ```
@@ -59,7 +58,7 @@ Creates a new user.
 Returns a JWT allowing access to the service. This is the only way to access the other API points
 ```
 {
-    username: <String>,
+    email: <String>,
     password: <String>
 }
 ```

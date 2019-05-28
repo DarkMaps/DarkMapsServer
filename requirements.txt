@@ -3,6 +3,7 @@ django-cors-headers==2.4.0
 django-templated-mail==1.1.1
 djangorestframework==3.8.2
 djangorestframework-jwt==1.11.0
+django-username-email=2.2.4
 djoser==1.3.3
 Pygments==2.2.0
 PyJWT==1.6.4
