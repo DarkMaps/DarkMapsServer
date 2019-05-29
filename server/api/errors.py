@@ -8,7 +8,7 @@ no_user = Response({
 
 no_recipient = Response({
     "code": "no_recipient",
-    "message": "One of the messages you sent has a non-existent user"
+    "message": "The recipient for your message does not exist"
 }, status=status.HTTP_400_BAD_REQUEST)
 
 no_device = Response({

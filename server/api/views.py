@@ -1,7 +1,8 @@
 from api.models import Message, Device, PreKey, SignedPreKey
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from api.serializers import MessageSerializer, DeviceSerializer, PreKeyBundleSerializer, PreKeySerializer, SignedPreKeySerializer
 from django.core.exceptions import PermissionDenied
+from django.conf import settings
 
 from django.http import Http404
 from rest_framework.views import APIView
@@ -35,7 +36,7 @@ class MessageList(APIView):
         serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # User can post multiple messages. They will be defined as the sender
+    # User can post messages. They will be defined as the sender
     def post(self, request, **kwargs):
 
         # Check correct arguments provided
@@ -49,7 +50,7 @@ class MessageList(APIView):
             return errors.incorrect_arguments
 
         ownUser = self.request.user
-        recipientUsername = request.data["recipient"]
+        recipientEmail = request.data["recipient"]
         try:
             messageData = request.data["message"]
         except:
@@ -64,8 +65,10 @@ class MessageList(APIView):
             return errors.device_changed
 
         # Check repipient user exists
+        recipientUser = {}
+        userModel = get_user_model()
         try:
-            recipientUser = User.objects.get(username=recipientUsername)
+            recipientUser = userModel.objects.get(email=recipientEmail)
         except:
             return errors.no_recipient
 
@@ -167,7 +170,7 @@ class PreKeyBundleView(APIView):
         ownUser = self.request.user
 
         # Check correct arguments provided
-        if not (('recipientUsername' in kwargs) & ('ownDeviceRegistrationID' in kwargs)):
+        if not (('recipientEmail' in kwargs) & ('ownDeviceRegistrationID' in kwargs)):
             return errors.incorrect_arguments
 
         # Check device exists and owned by user
@@ -180,8 +183,9 @@ class PreKeyBundleView(APIView):
 
         # Check recipient user exists
         recipientUser = {}
+        userModel = get_user_model()
         try:
-            recipientUser = User.objects.get(username=kwargs['recipientUsername'])
+            recipientUser = userModel.objects.get(email=kwargs['recipientEmail'])
         except:
             return errors.no_recipient
 

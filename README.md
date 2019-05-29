@@ -3,6 +3,12 @@
 
 This repository contains a simple server providing REST API calls to manage a messaging service using signal protocol encryption. It allows for storage and retrieval of all required keys, as well as the encrypted messages.
 
+**DISCLAIMER - This project has no relation to the Signal app, although it makes use of the underlying code. It is intended for testing purposes only, and has not been tested for security**
+
+##TODO
+- Inconsistent variable naming structure between Djoser and API eg. keyID and current_password
+- Remove sender address from message store
+
 ## Local Development
 Local development using sqlite can easily be initiated using:
 ```
@@ -66,6 +72,11 @@ Returns a JWT allowing access to the service. This is the only way to access the
 **/auth/users/me DELETE**
 
 Deletes a user and all their associated data. Requires JWT authentication.
+```
+{
+    current_password: <String>
+}
+```
 
 **/auth/password/reset POST**
 
@@ -129,7 +140,7 @@ Deletes a message owned by the user. Requires JWT authentication.
 
 ## Keys
 
-**/prekeybundle/<recipientUsername>/<deviceRegistrationID> GET**
+**/prekeybundle/<recipientEmail>/<deviceRegistrationID> GET**
 
 Gets a prekey bundle in anticipation of sending an initial message. Requires JWT authentication.
 
