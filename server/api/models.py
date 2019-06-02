@@ -29,6 +29,7 @@ class Message(models.Model):
     recipient = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="received_messages")
     created = models.DateTimeField(auto_now_add=True)
     content = models.CharField(max_length=1000, blank=False)
-    sender = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="sent_messages")
+    senderRegistrationId=models.PositiveIntegerField(blank=False)
+    senderAddress=models.CharField(max_length=100, blank=False)
     class Meta:
         ordering = ('created',)

@@ -7,7 +7,8 @@ This repository contains a simple server providing REST API calls to manage a me
 
 ##TODO
 - Inconsistent variable naming structure between Djoser and API eg. keyID and current_password
-- Remove sender address from message store
+- Remove admin interface
+- Add email settings for production
 
 ## Local Development
 Local development using sqlite can easily be initiated using:

@@ -29,6 +29,7 @@ ALLOWED_HOSTS =  os.environ.get('DJANGO_ALLOWED_HOSTS', 'db 127.0.0.1').split()
 
 # Application definition
 INSTALLED_APPS = [
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

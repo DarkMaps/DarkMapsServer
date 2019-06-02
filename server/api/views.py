@@ -36,7 +36,7 @@ class MessageList(APIView):
         serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # User can post messages. They will be defined as the sender
+    # User can post messages. Note: The message sender is not recorded, if you want this to be visible to the recipient you  must encrypt it within the message content
     def post(self, request, **kwargs):
 
         # Check correct arguments provided
@@ -60,7 +60,7 @@ class MessageList(APIView):
         if not hasattr(ownUser, "device"):
             return errors.no_device
 
-        # Check device ID has not changed
+        # Check own device ID has not changed
         if int(kwargs['requestedDeviceRegistrationID']) != ownUser.device.registrationId:
             return errors.device_changed
 
@@ -83,7 +83,7 @@ class MessageList(APIView):
         if not (recipientUser.device.registrationId == int(json.loads(messageData)['registrationId'])):
             return errors.recipient_identity_changed
 
-        serializer = MessageSerializer(data={'content': messageData}, context={'senderDevice': ownUser.device, 'recipientDevice': recipientDevice})
+        serializer = MessageSerializer(data={'content': messageData, 'senderAddress':ownUser.device.address , 'senderRegistrationId':ownUser.device.registrationId}, context={'recipientDevice': recipientDevice})
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else: 
@@ -193,11 +193,6 @@ class PreKeyBundleView(APIView):
         if not hasattr(recipientUser, "device"):
             return errors.no_recipient_device
         device = recipientUser.device
-
-        # Check prekey available for device before proceeding
-        if device.prekey_set.count() == 0:
-            # Handle no pre keys available for device - throw an error for security
-            return errors.no_prekeys
 
         # Build pre key bundle, removing a preKey from the requested user's list
         preKeyToReturn = device.prekey_set.all()[:1].get()
