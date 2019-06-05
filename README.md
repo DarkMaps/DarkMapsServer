@@ -7,7 +7,6 @@ This repository contains a simple server providing REST API calls to manage a me
 
 ##TODO
 - Remove admin interface
-- Add email settings for production
 
 ## Local Development
 Local development using sqlite can easily be initiated using:
@@ -42,6 +41,18 @@ You will most likely want to connect to an external database such as Amazon RDS.
     - 'DATABASE_HOST'
     - 'DATABASE_PORT'
     - 'DJANGO_ALLOWED_HOSTS' (passed in as a string of allowed hosts separated by spaces eg. 'foo.com baa.com')
+
+## Email
+You will need to set up external email using SMTP in order to allow your users to rset their passwords. Do so by passing the following environment variables to your container.
+
+	- EMAIL_BACKEND
+	- EMAIL_HOST
+	- EMAIL_PORT
+	- EMAIL_USE_TLS
+	- EMAIL_USE_SSL
+	- EMAIL_TIMEOUT
+	- EMAIL_SSL_KEYFILE
+	- EMAIL_SSL_CERTFILE
 
 ## API Documentation
 

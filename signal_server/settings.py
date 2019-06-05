@@ -151,12 +151,6 @@ REST_FRAMEWORK = {
     }
 }
 
-# JWT
-#  https://getblimp.github.io/django-rest-framework-jwt/#additional-settings
-JWT_AUTH = {
-    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
-}
-
 SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
 }
@@ -169,3 +163,13 @@ DJOSER = {
     'TOKEN_MODEL': None,
     'SERIALIZERS': {'user_delete': 'signal_server.custom_djoser.serializers.UserDeleteSerializer'}
 }
+
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
+EMAIL_PORT = os.environ.get('EMAIL_PORT', None)
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', None)
+EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', None)
+EMAIL_TIMEOUT = os.environ.get('EMAIL_TIMEOUT', None)
+EMAIL_SSL_KEYFILE = os.environ.get('EMAIL_SSL_KEYFILE', None)
+EMAIL_SSL_CERTFILE = os.environ.get('EMAIL_SSL_CERTFILE', None)
