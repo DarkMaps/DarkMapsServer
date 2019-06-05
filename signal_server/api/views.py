@@ -152,7 +152,7 @@ class DeviceView(APIView):
 
     # User can delete a device they own
     def delete(self, requested, **kwargs):
-        # Note - do not verify registrationID here as device should not exist
+        
         user = self.request.user
         # Check device exists and owned by user
         if not hasattr(user, "device"):

@@ -6,12 +6,14 @@ This repository contains a simple server providing REST API calls to manage a me
 **DISCLAIMER - This project has no relation to the Signal app, although it makes use of the underlying code. It is intended for testing purposes only, and has not been tested for security**
 
 ##TODO
+- Check error codes
+- Consider reformatting error responses to remove JSON and simplify formatting on client
 - Remove admin interface
 
 ## Local Development
 Local development using sqlite can easily be initiated using:
 ```
-./server/development.sh
+./development.sh
 ```
 
 **Note:** This requires the python environment to have been correctly set up previously, typically using a virtual environment. For example:
@@ -123,7 +125,7 @@ Body:
 }
 ```
 
-**/device/<deviceRegistrationID> DELETE**
+**/device DELETE**
 
 Deletes a device. Requires JWT authentication
 
