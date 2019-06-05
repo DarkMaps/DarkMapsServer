@@ -29,6 +29,7 @@ ALLOWED_HOSTS =  os.environ.get('DJANGO_ALLOWED_HOSTS', 'db 127.0.0.1').split()
 
 # Application definition
 INSTALLED_APPS = [
+    'signal_server.api.apps.ApiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -36,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'api.apps.ApiConfig',
     'rest_framework.authtoken',
     'djoser',
     'corsheaders',
@@ -166,5 +166,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'auth/password/reset/confirm{uid}/{token}',
-    'TOKEN_MODEL': None
+    'TOKEN_MODEL': None,
+    'SERIALIZERS': {'user_delete': 'signal_server.custom_djoser.serializers.UserDeleteSerializer'}
 }

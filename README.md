@@ -6,7 +6,6 @@ This repository contains a simple server providing REST API calls to manage a me
 **DISCLAIMER - This project has no relation to the Signal app, although it makes use of the underlying code. It is intended for testing purposes only, and has not been tested for security**
 
 ##TODO
-- Inconsistent variable naming structure between Djoser and API eg. keyID and current_password
 - Remove admin interface
 - Add email settings for production
 
@@ -75,7 +74,7 @@ Returns a JWT allowing access to the service. This is the only way to access the
 Deletes a user and all their associated data. Requires JWT authentication.
 ```
 {
-    current_password: <String>
+    currentPassword: <String>
 }
 ```
 

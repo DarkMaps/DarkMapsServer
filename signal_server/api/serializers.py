@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Message, Device, PreKey, SignedPreKey
+from signal_server.api.models import Message, Device, PreKey, SignedPreKey
 from django.core.exceptions import PermissionDenied
 
 class MessageSerializer(serializers.Serializer):

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from api.models import Message, Device, PreKey, SignedPreKey
+from signal_server.api.models import Message, Device, PreKey, SignedPreKey
 
 # Register your models here.
 class MessageAdmin(admin.ModelAdmin):

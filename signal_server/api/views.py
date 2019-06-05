@@ -1,6 +1,6 @@
-from api.models import Message, Device, PreKey, SignedPreKey
+from signal_server.api.models import Message, Device, PreKey, SignedPreKey
 from django.contrib.auth import get_user_model
-from api.serializers import MessageSerializer, DeviceSerializer, PreKeyBundleSerializer, PreKeySerializer, SignedPreKeySerializer
+from signal_server.api.serializers import MessageSerializer, DeviceSerializer, PreKeyBundleSerializer, PreKeySerializer, SignedPreKeySerializer
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
 
@@ -8,7 +8,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from api import errors
+from signal_server.api import errors
 
 import json
 from urllib.parse import unquote, quote
