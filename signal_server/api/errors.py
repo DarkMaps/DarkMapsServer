@@ -9,17 +9,17 @@ no_user = Response({
 no_recipient = Response({
     "code": "no_recipient",
     "message": "The recipient for your message does not exist"
-}, status=status.HTTP_400_BAD_REQUEST)
+}, status=status.HTTP_404_NOT_FOUND)
 
 no_device = Response({
     "code": "no_device",
     "message": "User has not yet registered a device"
-}, status=status.HTTP_400_BAD_REQUEST)
+}, status=status.HTTP_404_NOT_FOUND)
 
 no_recipient_device = Response({
-    "code": "no_device",
+    "code": "no_recipient_device",
     "message": "Recipient has not yet registered a device"
-}, status=status.HTTP_400_BAD_REQUEST)
+}, status=status.HTTP_404_NOT_FOUND)
 
 device_exists = Response({
     "code": "device_exists",
@@ -55,6 +55,11 @@ recipient_identity_changed = Response({
     "code": "recipient_identity_changed",
     "message": "Recipients device has changed"
 }, status=status.HTTP_403_FORBIDDEN)
+
+invalid_recipient_email = Response({
+    "code": "invalid_recipient_email",
+    "message": "Recipients email was invalid"
+}, status=status.HTTP_400_BAD_REQUEST)
 
 def invalidData(errors):
     return Response({

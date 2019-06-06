@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from signal_server.api import errors
 
-import json
+import json, re
 from urllib.parse import unquote, quote
 
 
@@ -51,6 +51,10 @@ class MessageList(APIView):
 
         ownUser = self.request.user
         recipientEmail = request.data["recipient"]
+        emailPattern = re.compile(r'(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])')
+        if not (emailPattern.match(recipientEmail)):
+            return errors.invalid_recipient_email
+
         try:
             messageData = request.data["message"]
         except:
@@ -64,7 +68,7 @@ class MessageList(APIView):
         if int(kwargs['requestedDeviceRegistrationID']) != ownUser.device.registrationId:
             return errors.device_changed
 
-        # Check repipient user exists
+        # Check repiient user exists
         recipientUser = {}
         userModel = get_user_model()
         try:
@@ -173,6 +177,10 @@ class PreKeyBundleView(APIView):
         if not (('recipientEmail' in kwargs) & ('ownDeviceRegistrationID' in kwargs)):
             return errors.incorrect_arguments
 
+        emailPattern = re.compile(r'(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])')
+        if not (emailPattern.match(kwargs['recipientEmail'])):
+            return errors.invalid_recipient_email
+
         # Check device exists and owned by user
         if not hasattr(ownUser, "device"):
             return errors.no_device
@@ -194,17 +202,17 @@ class PreKeyBundleView(APIView):
             return errors.no_recipient_device
         device = recipientUser.device
 
-        # Build pre key bundle, removing a preKey from the requested user's list
-        preKeyToReturn = device.prekey_set.all()[:1].get()
-        signedPreKey = device.signedprekey
-    
         preKeyBundle = device.__dict__
-        preKeyBundle['preKey'] = preKeyToReturn
-        preKeyBundle['signedPreKey'] = signedPreKey
-        serializer = PreKeyBundleSerializer(preKeyBundle)
+        preKeyBundle['signedPreKey'] = device.signedprekey
 
-        # Update stored pre key
-        preKeyToReturn.delete()
+        # Build pre key bundle, removing a preKey from the requested user's list
+        if (device.prekey_set.count() > 0):
+            preKeyToReturn = device.prekey_set.all()[:1].get()
+            preKeyBundle['preKey'] = preKeyToReturn
+            # Update stored pre key
+            preKeyToReturn.delete()
+        
+        serializer = PreKeyBundleSerializer(preKeyBundle)
 
         # Return bundle
         return Response(serializer.data, status=status.HTTP_200_OK)

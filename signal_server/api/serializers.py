@@ -59,6 +59,6 @@ class PreKeyBundleSerializer(serializers.Serializer):
     address = serializers.CharField(max_length=100, min_length=1)
     identityKey = serializers.CharField(max_length=33, min_length=33)
     registrationId = serializers.IntegerField(min_value=0, max_value=999999)
-    preKey = PreKeySerializer()
+    preKey = PreKeySerializer(required=False)
     signedPreKey = SignedPreKeySerializer()
 
