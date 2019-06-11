@@ -9,7 +9,7 @@ This repository contains a simple server providing REST API calls to manage a me
 - Check error codes
 - Consider reformatting error responses to remove JSON and simplify formatting on client
 - Secure JWT backend (blacklist etc)
-- Include HMAC signing (with RSA signing key exchange on first server contact)
+- Add 2fa using 'django-trench'
 - Remove admin interface
 
 ## Local Development
