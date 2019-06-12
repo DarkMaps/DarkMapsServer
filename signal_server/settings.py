@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'djoser',
     'corsheaders',
     'cuser',
+    'rest_framework_simplejwt.token_blacklist',
+    'trench'
 ]
 
 MIDDLEWARE = [
@@ -160,6 +162,15 @@ DJOSER = {
     'SERIALIZERS': {'user_delete': 'signal_server.custom_djoser.serializers.UserDeleteSerializer'}
 }
 
+# JWT
+SIMPLE_JWT = {
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+
+    'ALGORITHM': 'HS512',
+    'SIGNING_KEY': os.environ.get('DJANGO_JWT_KEY', 's!c24+@++wmf)0k*r9$d@y=^(l@5t6=s5l&hz6mnd8ugoz^an@')
+}
+
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
@@ -169,3 +180,29 @@ EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', None)
 EMAIL_TIMEOUT = os.environ.get('EMAIL_TIMEOUT', None)
 EMAIL_SSL_KEYFILE = os.environ.get('EMAIL_SSL_KEYFILE', None)
 EMAIL_SSL_CERTFILE = os.environ.get('EMAIL_SSL_CERTFILE', None)
+
+# Trench (For 2FA)
+TRENCH_AUTH = {
+    'FROM_EMAIL': os.environ.get('2FA_FROM_EMAIL', "your@email.com"),
+    'BACKUP_CODES_LENGTH': 20,  # keep (quantity * length) under 200
+    'CONFIRM_DISABLE_WITH_CODE': True,
+    'CONFIRM_BACKUP_CODES_REGENERATION_WITH_CODE': True,
+    'ALLOW_BACKUP_CODES_REGENERATION': True,
+    'APPLICATION_ISSUER_NAME': os.environ.get('2FA_APPLICATION_NAME', "myApplication"),
+    'MFA_METHODS': {
+        'email': {
+            'VERBOSE_NAME': 'email',
+            'VALIDITY_PERIOD': 60 * 10,
+            'FIELD': 'email',
+            'HANDLER': 'trench.backends.basic_mail.SendMailBackend',
+            'SERIALIZER': 'trench.serializers.RequestMFACreateEmailSerializer',
+            'SOURCE_FIELD': 'email',
+        },
+        'app': {
+            'VERBOSE_NAME': 'app',
+            'VALIDITY_PERIOD': 60 * 10,
+            'USES_THIRD_PARTY_CLIENT': True,
+            'HANDLER': 'trench.backends.application.ApplicationBackend',
+        },
+    },
+}

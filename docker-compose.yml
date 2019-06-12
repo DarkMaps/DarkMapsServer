@@ -10,7 +10,7 @@ services:
       MYSQL_DATABASE: signal_server
     healthcheck:
           test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-          timeout: 20s
+          timeout: 20sz
           retries: 10
   web:
     build: .
@@ -18,4 +18,5 @@ services:
       - "8000:8000"
     depends_on:
       - "db"
-    command: bash -c "sleep 30 && python manage.py && ./start.sh"
+    command: bash -c "sleep 60 && python manage.py migrate && ./start.sh"
+    # command: bash -c "sleep 60 && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"

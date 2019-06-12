@@ -26,11 +26,6 @@ device_exists = Response({
     "message": "A device has already been created for this user"
 }, status=status.HTTP_403_FORBIDDEN)
 
-no_prekeys = Response({
-    "code": "no_prekeys",
-    "message": "No prekeys are available for the requested device"
-}, status=status.HTTP_400_BAD_REQUEST)
-
 non_existant_message = Response({
     "code": "non-existant_message",
     "message": "One of the messages you are trying to delete does not exist"

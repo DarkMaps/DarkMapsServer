@@ -7,7 +7,6 @@ This repository contains a simple server providing REST API calls to manage a me
 
 ##TODO
 - Check error codes
-- Consider reformatting error responses to remove JSON and simplify formatting on client
 - Remove admin interface
 
 ## Local Development
@@ -55,6 +54,14 @@ You will need to set up external email using SMTP in order to allow your users t
 	- EMAIL_TIMEOUT
 	- EMAIL_SSL_KEYFILE
 	- EMAIL_SSL_CERTFILE
+
+## Authentication
+You can set and reset the JWT signing key using the following environment variable:
+	- DJANGO_JWT_KEY
+
+The following environment variables alter the action of the 2FA manager
+	- 2FA_FROM_EMAIL
+	- 2FA_APPLICATION_NAME
 
 ## API Documentation
 
