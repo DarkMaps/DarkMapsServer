@@ -9,12 +9,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from signal_server.api import errors
+from signal_server.custom_djoser.authentication import TokenAuthenticationWithSignature
 
 import json, re
 from urllib.parse import unquote, quote
 
 
 class MessageList(APIView):
+
+    authentication_classes = (TokenAuthenticationWithSignature, )
 
     # User can get a list of messages for their device
     def get(self, request, **kwargs):
@@ -168,18 +171,18 @@ class DeviceView(APIView):
 
 class PreKeyBundleView(APIView):
     throttle_scope = 'preKeyBundle'
+    authentication_classes = (TokenAuthenticationWithSignature, )
     # User can optain a preKeyBundle from another user
     def get(self, request, **kwargs):
 
         ownUser = self.request.user
 
         # Check correct arguments provided
-        if not (('recipientEmail' in kwargs) & ('ownDeviceRegistrationID' in kwargs)):
+        if not (('recipientAddress' in kwargs) & ('ownDeviceRegistrationID' in kwargs)):
             return errors.incorrect_arguments
-
-        emailPattern = re.compile(r'(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])')
-        if not (emailPattern.match(kwargs['recipientEmail'])):
-            return errors.invalid_recipient_email
+            
+        if not (isinstance(kwargs['recipientAddress'], str)):
+            return errors.invalid_recipient_address
 
         # Check device exists and owned by user
         if not hasattr(ownUser, "device"):
@@ -191,16 +194,12 @@ class PreKeyBundleView(APIView):
 
         # Check recipient user exists
         recipientUser = {}
-        userModel = get_user_model()
+        # Decode hex
+        recipientAddress=bytearray.fromhex(kwargs['recipientAddress']).decode()
         try:
-            recipientUser = userModel.objects.get(email=kwargs['recipientEmail'])
+            device = Device.objects.get(address=recipientAddress)
         except:
-            return errors.no_recipient
-
-        # Check user has a registered device
-        if not hasattr(recipientUser, "device"):
             return errors.no_recipient_device
-        device = recipientUser.device
 
         preKeyBundle = device.__dict__
         preKeyBundle['signedPreKey'] = device.signedprekey
@@ -220,6 +219,8 @@ class PreKeyBundleView(APIView):
         
 
 class UserPreKeys(APIView):
+
+    authentication_classes = (TokenAuthenticationWithSignature, )
 
     # User can post a new set of preKeys
     def post(self, request, **kwargs):
@@ -259,6 +260,9 @@ class UserPreKeys(APIView):
         
 
 class UserSignedPreKeys(APIView):
+
+    authentication_classes = (TokenAuthenticationWithSignature, )
+
     # User can post a new signedPreKey
     def post(self, request, **kwargs):
 

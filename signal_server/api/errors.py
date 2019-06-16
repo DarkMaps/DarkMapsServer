@@ -51,9 +51,9 @@ recipient_identity_changed = Response({
     "message": "Recipients device has changed"
 }, status=status.HTTP_403_FORBIDDEN)
 
-invalid_recipient_email = Response({
-    "code": "invalid_recipient_email",
-    "message": "Recipients email was invalid"
+invalid_recipient_address = Response({
+    "code": "invalid_recipient_address",
+    "message": "Recipients address was invalid"
 }, status=status.HTTP_400_BAD_REQUEST)
 
 def invalidData(errors):

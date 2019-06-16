@@ -8,8 +8,7 @@ This repository contains a simple server providing REST API calls to manage a me
 ##TODO
 - Check error codes
 - Consider reformatting error responses to remove JSON and simplify formatting on client
-- Secure JWT backend (blacklist etc)
-- Add 2fa using 'django-trench'
+- Add clearance of blacklisted JWTs
 - Remove admin interface
 
 ## Local Development

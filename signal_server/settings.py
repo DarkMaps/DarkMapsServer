@@ -41,8 +41,7 @@ INSTALLED_APPS = [
     'djoser',
     'corsheaders',
     'cuser',
-    'rest_framework_simplejwt.token_blacklist',
-    'trench'
+    'trench',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'signal_server.api.middleware.SignatureCountMiddleware'
 ]
 
 ROOT_URLCONF = 'signal_server.urls'
@@ -139,7 +139,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_THROTTLE_CLASSES': (
         'rest_framework.throttling.AnonRateThrottle',
@@ -156,19 +156,23 @@ REST_FRAMEWORK = {
 # Only using REST framework, therefore safe
 CORS_ORIGIN_ALLOW_ALL = True
 
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'signature'
+)
+
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'auth/password/reset/confirm{uid}/{token}',
-    'TOKEN_MODEL': None,
+    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
     'SERIALIZERS': {'user_delete': 'signal_server.custom_djoser.serializers.UserDeleteSerializer'}
-}
-
-# JWT
-SIMPLE_JWT = {
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-
-    'ALGORITHM': 'HS512',
-    'SIGNING_KEY': os.environ.get('DJANGO_JWT_KEY', 's!c24+@++wmf)0k*r9$d@y=^(l@5t6=s5l&hz6mnd8ugoz^an@')
 }
 
 # Email

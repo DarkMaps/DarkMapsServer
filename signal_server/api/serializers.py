@@ -40,8 +40,10 @@ class DeviceSerializer(serializers.Serializer):
     identityKey = serializers.CharField(max_length=44, min_length=44)
     address = serializers.CharField(max_length=100)
     registrationId = serializers.IntegerField(min_value=0, max_value=999999)
+    signingKey = serializers.CharField(max_length=44, min_length=44)
     preKeys = PreKeySerializer(many=True)
     signedPreKey = SignedPreKeySerializer()
+    signatureCount = serializers.IntegerField(min_value=0, max_value=99999999, required=False, default=0)
     def create(self, validated_data):
         user = self.context['user']
         # Limit to max 1 device for security reasons
@@ -54,6 +56,11 @@ class DeviceSerializer(serializers.Serializer):
         for x in preKeys:
             PreKey.objects.create(device=deviceReference, **x)
         return deviceReference
+
+    def update(self, instance, validated_data):
+        instance.signatureCount = validated_data.get('signatureCount', instance.signatureCount)
+        instance.save()
+        return instance
 
 class PreKeyBundleSerializer(serializers.Serializer):
     address = serializers.CharField(max_length=100, min_length=1)
