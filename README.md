@@ -8,7 +8,6 @@ This repository contains a simple server providing REST API calls to manage a me
 ##TODO
 - Check error codes
 - Consider reformatting error responses to remove JSON and simplify formatting on client
-- Add clearance of blacklisted JWTs
 - Remove admin interface
 
 ## Local Development
@@ -111,7 +110,7 @@ Allows user to reset password.
 
 ### Devices
 
-**/device/<deviceRegistrationID> POST**
+**/device/ POST**
 
 Create a new device. Requires JWT authentication.
 Body:

@@ -15,7 +15,7 @@ class Device(models.Model):
 
 class PreKey(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
-    keyId = models.PositiveIntegerField(blank=False)
+    keyId = models.PositiveIntegerField(blank=False, unique=True)
     # Public key length is 44 text characters
     publicKey = models.CharField(max_length=44, blank=False)
 

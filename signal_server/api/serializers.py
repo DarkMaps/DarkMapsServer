@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from signal_server.api.models import Message, Device, PreKey, SignedPreKey
 from django.core.exceptions import PermissionDenied
+from rest_framework.validators import UniqueValidator
 
 class MessageSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
@@ -15,7 +16,7 @@ class MessageSerializer(serializers.Serializer):
         return obj.recipient.address
 
 class PreKeySerializer(serializers.Serializer):
-    keyId = serializers.IntegerField(min_value=0, max_value= 999999)
+    keyId = serializers.IntegerField(min_value=0, max_value= 999999, validators=[UniqueValidator(queryset=PreKey.objects.all())])
     publicKey = serializers.CharField(max_length=44, min_length=44)
     def create(self, validated_data):
         user = self.context['user']
