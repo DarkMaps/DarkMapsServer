@@ -15,9 +15,14 @@ class Device(models.Model):
 
 class PreKey(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
-    keyId = models.PositiveIntegerField(blank=False, unique=True)
+    keyId = models.PositiveIntegerField(blank=False)
     # Public key length is 44 text characters
     publicKey = models.CharField(max_length=44, blank=False)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['device', 'keyId'], name='unique_keyId')
+        ]
+
 
 class SignedPreKey(models.Model):
     device = models.OneToOneField(Device, on_delete=models.CASCADE)

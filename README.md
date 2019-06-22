@@ -159,6 +159,12 @@ Gets all outstanding messages for a user. Requires JWT authentication.
 
 Deletes a message owned by the user. Requires JWT authentication.
 
+```
+[
+	<messageId>
+]
+```
+
 ## Keys
 
 **/prekeybundle/<recipientEmail>/<deviceRegistrationID> GET**

@@ -1,7 +1,7 @@
 from signal_server.api.models import Message, Device, PreKey, SignedPreKey
 from django.contrib.auth import get_user_model
 from signal_server.api.serializers import MessageSerializer, DeviceSerializer, PreKeyBundleSerializer, PreKeySerializer, SignedPreKeySerializer
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, FieldError
 from django.conf import settings
 
 from django.http import Http404
@@ -45,7 +45,7 @@ class MessageList(APIView):
         # Check correct arguments provided
         if not 'requestedDeviceRegistrationID' in kwargs:
             return errors.incorrect_arguments
-        if not (hasattr(request, "data") & isinstance(request.data, object)):
+        if not (hasattr(request, "data") & isinstance(request.data, object) & (not isinstance(request.data, list))):
             return errors.incorrect_arguments
         if not (("recipient" in request.data) & isinstance(request.data["recipient"], str)):
             return errors.incorrect_arguments
@@ -85,8 +85,6 @@ class MessageList(APIView):
         recipientDevice = recipientUser.device
 
         # Check recipient device registrationId matches that sent in message
-        print(recipientUser.device.registrationId)
-        print(json.loads(messageData)['registrationId'])
         if not (recipientUser.device.registrationId == int(json.loads(messageData)['registrationId'])):
             return errors.recipient_identity_changed
 
@@ -126,7 +124,7 @@ class MessageList(APIView):
                     response.append(errors.not_message_owner)
                 else:
                     message.delete()
-                    response.append('success')
+                    response.append('message_deleted')
             except:
                 response.append(errors.non_existant_message)
 
@@ -257,6 +255,8 @@ class UserPreKeys(APIView):
 
         except PermissionDenied:
             return errors.reached_max_prekeys
+        except FieldError:
+            return errors.prekey_id_exists
         
 
 class UserSignedPreKeys(APIView):
@@ -290,4 +290,3 @@ class UserSignedPreKeys(APIView):
         user.device.signedprekey.delete()
         serializer.save()
         return Response({"code": "signed_prekey_stored", "message": "Signed prekey successfully stored"}, status=status.HTTP_200_OK)
-            

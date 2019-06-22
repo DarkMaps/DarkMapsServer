@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from signal_server.api.models import Message, Device, PreKey, SignedPreKey
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, FieldError
 from rest_framework.validators import UniqueValidator
 
 class MessageSerializer(serializers.Serializer):
@@ -16,7 +16,7 @@ class MessageSerializer(serializers.Serializer):
         return obj.recipient.address
 
 class PreKeySerializer(serializers.Serializer):
-    keyId = serializers.IntegerField(min_value=0, max_value= 999999, validators=[UniqueValidator(queryset=PreKey.objects.all())])
+    keyId = serializers.IntegerField(min_value=0, max_value= 999999)
     publicKey = serializers.CharField(max_length=44, min_length=44)
     def create(self, validated_data):
         user = self.context['user']
@@ -25,6 +25,9 @@ class PreKeySerializer(serializers.Serializer):
         # Limit to max 100 prekeys
         if deviceReference.prekey_set.count() > 99:
             raise PermissionDenied()
+        # Check an existing prekey does not have the same ID
+        if not deviceReference.prekey_set.filter(keyId = validated_data['keyId']).count() == 0:
+            raise FieldError()
         return PreKey.objects.create(device=deviceReference, **validated_data)
 
 class SignedPreKeySerializer(serializers.Serializer):

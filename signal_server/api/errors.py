@@ -56,6 +56,21 @@ invalid_recipient_address = Response({
     "message": "Recipients address was invalid"
 }, status=status.HTTP_400_BAD_REQUEST)
 
+reached_max_prekeys = Response({
+    "code": "reached_max_prekeys",
+    "message": "User has reached the maximum number of prekeys allowed"
+}, status=status.HTTP_400_BAD_REQUEST)
+
+prekey_id_exists = Response({
+    "code": "prekey_id_exists",
+    "message": "A prekey with that keyId already exists"
+}, status=status.HTTP_400_BAD_REQUEST)
+
+invalid_recipient_email = Response({
+    "code": "invalid_recipient_email",
+    "message": "The email provided for the recipient is incorrectly formatted"
+}, status=status.HTTP_400_BAD_REQUEST)
+
 def invalidData(errors):
     return Response({
         "code": "invalid_data",
