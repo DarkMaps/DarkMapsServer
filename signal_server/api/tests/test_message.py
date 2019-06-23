@@ -76,7 +76,72 @@ class PrekeysTestCase(TestCase):
     def test_delete_message(self):
         """Messages can be deleted"""
         response = self.client.delete('/messages/1234/', [1], format='json')
-        print(response.__dict__)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(isinstance(response.data, list), True)
         self.assertEqual(response.data[0], "message_deleted")
+
+    def test_non_existant_recipient_message(self):
+        """Messages with a non-existent recipient email are rejected"""
+        response = self.client.post('/messages/1234/', {
+            "recipient": "testuser3@test.com",
+            "message": '{"registrationId": 5678, "content": "test"}'
+        }, format='json')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data['code'], "no_recipient")
+
+    def test_incorrectly_formatted_email_message(self):
+        """Messages with an incorrectly formatted recipient email are rejected"""
+        response = self.client.post('/messages/1234/', {
+            "recipient": "test",
+            "message": '{"registrationId": 5678, "content": "test"}'
+        }, format='json')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['code'], "invalid_recipient_email")
+        
+
+    def test_no_json_message(self):
+        """Messages which do not cotain a JSON string in the content are rejected"""
+        response = self.client.post('/messages/1234/', {
+            "recipient": "testuser2@test.com",
+            "message": 'notjson'
+        }, format='json')
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.data['code'], "incorrect_arguments")
+
+    def test_changed_identity_send_message(self):
+        """Messages sent from an altered identity are rejected"""
+        response = self.client.post('/messages/1235/', {
+            "recipient": "testuser2@test.com",
+            "message": '{"registrationId": 5678, "content": "test"}'
+        }, format='json')
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.data['code'], "device_changed")
+
+    def test_changed_identity_receive_message(self):
+        """Messages sent from an altered identity are rejected"""
+        response = self.client.get('/messages/1235/')
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.data['code'], "device_changed")
+
+    def test_changed_identity_delete_message(self):
+        """Messages sent from an altered identity are rejected"""
+        response = self.client.delete('/messages/1235/', [1], format='json')
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.data['code'], "device_changed")
+        
+    def test_no_messages_available(self):
+        """Getting messages when none are available returns an empty array"""
+        self.client.force_authenticate(user=self.user2)
+        response = self.client.get('/messages/5678/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(isinstance(response.data, list), True)
+        self.assertEqual(len(response.data), 0)
+
+    def test_delete_message_not_owner(self):
+        """User cannot delete messages they do not own"""
+        self.client.force_authenticate(user=self.user2)
+        response = self.client.delete('/messages/5678/', [1], format='json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(isinstance(response.data, list), True)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['code'], 'not_message_owner')

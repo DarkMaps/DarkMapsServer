@@ -62,6 +62,11 @@ class MessageList(APIView):
             messageData = request.data["message"]
         except:
             return errors.incorrect_arguments
+
+        try:
+            messageDataParsed = json.loads(messageData)
+        except:
+            return errors.incorrect_arguments
         
         # Check device exists and owned by user
         if not hasattr(ownUser, "device"):
@@ -85,7 +90,7 @@ class MessageList(APIView):
         recipientDevice = recipientUser.device
 
         # Check recipient device registrationId matches that sent in message
-        if not (recipientUser.device.registrationId == int(json.loads(messageData)['registrationId'])):
+        if not (recipientUser.device.registrationId == int(messageDataParsed['registrationId'])):
             return errors.recipient_identity_changed
 
         serializer = MessageSerializer(data={'content': messageData, 'senderAddress':ownUser.device.address , 'senderRegistrationId':ownUser.device.registrationId}, context={'recipientDevice': recipientDevice})
@@ -119,7 +124,7 @@ class MessageList(APIView):
         for messageId in messageList:
             try:
                 message = Message.objects.get(id=messageId)
-                # Check user owns meaage
+                # Check user owns message
                 if not message.recipient.user == user:
                     response.append(errors.not_message_owner)
                 else:
