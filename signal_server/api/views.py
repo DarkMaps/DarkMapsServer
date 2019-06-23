@@ -198,7 +198,10 @@ class PreKeyBundleView(APIView):
         # Check recipient user exists
         recipientUser = {}
         # Decode hex
-        recipientAddress=bytearray.fromhex(kwargs['recipientAddress']).decode()
+        try:
+            recipientAddress=bytearray.fromhex(kwargs['recipientAddress']).decode()
+        except:
+            return errors.incorrect_arguments
         try:
             device = Device.objects.get(address=recipientAddress)
         except:

@@ -7,7 +7,8 @@ This repository contains a simple server providing REST API calls to manage a me
 
 ##TODO
 - Check error codes
-- Consider reformatting error responses to remove JSON and simplify formatting on client
+- Alter incorrect_arguments error to become a function include more detail
+- Add databse verification to tests
 - Remove admin interface
 
 ## Local Development
