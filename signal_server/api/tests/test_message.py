@@ -1,12 +1,11 @@
 from django.test import TestCase
-from rest_framework.test import APIClient, APIRequestFactory, force_authenticate
+from rest_framework.test import APIClient, force_authenticate
 from django.contrib.auth import get_user_model
 from signal_server.api.views import UserPreKeys, Device, PreKey, SignedPreKey, Message
 
-class PrekeysTestCase(TestCase):
+class MessageTestCase(TestCase):
     def setUp(self):
         User = get_user_model()
-        self.factory = APIRequestFactory()
         self.client = APIClient()
         # Set up user 1
         self.user1 = User.objects.create_user(email='testuser1@test.com', password='12345')
@@ -63,6 +62,12 @@ class PrekeysTestCase(TestCase):
             "recipient": "testuser2@test.com",
             "message": '{"registrationId": 5678, "content": "test"}'
         }, format='json')
+        self.user1.refresh_from_db()
+        self.assertEqual(hasattr(self.user2.device, 'received_messages'), True)
+        self.assertEqual(self.user2.device.received_messages.count(), 1)
+        self.assertEqual(self.user2.device.received_messages.first().content, '{"registrationId": 5678, "content": "test"}')
+        self.assertEqual(self.user2.device.received_messages.first().senderRegistrationId, 1234)
+        self.assertEqual(self.user2.device.received_messages.first().senderAddress, 'test1.1')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['id'], 2)
 
@@ -76,6 +81,8 @@ class PrekeysTestCase(TestCase):
     def test_delete_message(self):
         """Messages can be deleted"""
         response = self.client.delete('/messages/1234/', [1], format='json')
+        self.user1.refresh_from_db()
+        self.assertEqual(self.user1.device.received_messages.count(), 0)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(isinstance(response.data, list), True)
         self.assertEqual(response.data[0], "message_deleted")
@@ -86,6 +93,10 @@ class PrekeysTestCase(TestCase):
             "recipient": "testuser3@test.com",
             "message": '{"registrationId": 5678, "content": "test"}'
         }, format='json')
+        self.user1.refresh_from_db()
+        self.user2.refresh_from_db()
+        self.assertEqual(self.user1.device.received_messages.count(), 1)
+        self.assertEqual(self.user2.device.received_messages.count(), 0)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data['code'], "no_recipient")
 
@@ -95,6 +106,10 @@ class PrekeysTestCase(TestCase):
             "recipient": "test",
             "message": '{"registrationId": 5678, "content": "test"}'
         }, format='json')
+        self.user1.refresh_from_db()
+        self.user2.refresh_from_db()
+        self.assertEqual(self.user1.device.received_messages.count(), 1)
+        self.assertEqual(self.user2.device.received_messages.count(), 0)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['code'], "invalid_recipient_email")
         
@@ -105,6 +120,8 @@ class PrekeysTestCase(TestCase):
             "recipient": "testuser2@test.com",
             "message": 'notjson'
         }, format='json')
+        self.user2.refresh_from_db()
+        self.assertEqual(self.user2.device.received_messages.count(), 0)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['code'], "incorrect_arguments")
 
@@ -114,6 +131,8 @@ class PrekeysTestCase(TestCase):
             "recipient": "testuser2@test.com",
             "message": '{"registrationId": 5678, "content": "test"}'
         }, format='json')
+        self.user2.refresh_from_db()
+        self.assertEqual(self.user2.device.received_messages.count(), 0)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['code'], "device_changed")
 
@@ -126,6 +145,8 @@ class PrekeysTestCase(TestCase):
     def test_changed_identity_delete_message(self):
         """Messages sent from an altered identity are rejected"""
         response = self.client.delete('/messages/1235/', [1], format='json')
+        self.user1.refresh_from_db()
+        self.assertEqual(self.user1.device.received_messages.count(), 1)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['code'], "device_changed")
         
@@ -141,7 +162,16 @@ class PrekeysTestCase(TestCase):
         """User cannot delete messages they do not own"""
         self.client.force_authenticate(user=self.user2)
         response = self.client.delete('/messages/5678/', [1], format='json')
+        self.user1.refresh_from_db()
+        self.user2.refresh_from_db()
+        self.assertEqual(self.user1.device.received_messages.count(), 1)
+        self.assertEqual(self.user2.device.received_messages.count(), 0)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(isinstance(response.data, list), True)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['code'], 'not_message_owner')
+
+    def test_put_message(self):
+        """The /messages PUT method should fail"""
+        response = self.client.put('/messages/1234/', [], format='json')
+        self.assertEqual(response.status_code, 405)
