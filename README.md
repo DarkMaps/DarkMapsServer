@@ -1,15 +1,34 @@
 # signal_server
+
+
+
 >> A server for the signal protocol
+
+
 
 This repository contains a simple server providing REST API calls to manage a messaging service using signal protocol encryption. It allows for storage and retrieval of all required keys, as well as the encrypted messages.
 
-**DISCLAIMER - This project has no relation to the Signal app, although it makes use of the underlying code. It is intended for testing purposes only, and has not been tested for security**
+
+
+**DISCLAIMER - This project has no relation to the Signal Foundation or Signal app, although it makes use of the underlying code provided in the [libsignal_protocol_javascript](https://github.com/signalapp/libsignal-protocol-javascript) package. It is intended for testing purposes only, and has not been tested at any point for security**
+
+
+
+---
+
+
 
 ##TODO
 - Check error codes
-- Alter incorrect_arguments error to become a function include more detail
-- Add databse verification to tests
+- Caching
+- DOCUMENTATION
 - Remove admin interface
+
+
+
+---
+
+
 
 ## Local Development
 Local development using sqlite can easily be initiated using:
@@ -24,29 +43,59 @@ source .env/bin/activate
 pip install -r requirements.txt
 ```
 
+
+
+---
+
+
+
 ## Starting the server using docker swarm
+
 A simple docker compose file is provided for example usage. This creates a simple entwork with a single instance of the container and a mysql database. The API is available on port 8000.
 ```
 docker-compose up
 ```
 
+
+
+---
+
+
+
 ## Using in production
-Using this container in production will require a few extra variables to be set
 
-### Django Secret
-Set this by passing an environment variable to your container as DJANGO_SECRET_KEY.
+Using this container safely in production requires a few extra variables to be set:
 
-### Database
-You will most likely want to connect to an external database such as Amazon RDS. To do this pass the following environment variables to the container:
-    - 'DATABASE_NAME'
-    - 'DATABASE_USER'
-    - 'DATABASE_PASSWORD'
-    - 'DATABASE_HOST'
-    - 'DATABASE_PORT'
-    - 'DJANGO_ALLOWED_HOSTS' (passed in as a string of allowed hosts separated by spaces eg. 'foo.com baa.com')
 
-## Email
-You will need to set up external email using SMTP in order to allow your users to rset their passwords. Do so by passing the following environment variables to your container.
+
+
+
+### 		Django Secret
+​		Set this by passing an environment variable to your container as ```DJANGO_SECRET_KEY```.
+
+
+
+
+
+### 		Database
+​		You will most likely want to connect to an external database such as Amazon RDS. To do this pass the following environment variables to the container:
+
+```
+- DATABASE_NAME
+- DATABASE_USER
+- DATABASE_PASSWORD
+- DATABASE_HOST
+- DATABASE_PORT
+- DJANGO_ALLOWED_HOSTS (passed in as a string of allowed hosts separated by spaces eg. 'foo.com baa.com')
+```
+
+
+
+
+
+### 		Email
+
+​		You will need to set up external email using SMTP in order to allow your users to rset their passwords. Do so by passing the following environment variables to your container.
 
 	- EMAIL_BACKEND
 	- EMAIL_HOST
@@ -57,13 +106,24 @@ You will need to set up external email using SMTP in order to allow your users t
 	- EMAIL_SSL_KEYFILE
 	- EMAIL_SSL_CERTFILE
 
-## Authentication
-You can set and reset the JWT signing key using the following environment variable:
-	- DJANGO_JWT_KEY
+​		
 
-The following environment variables alter the action of the 2FA manager
-	- 2FA_FROM_EMAIL
-	- 2FA_APPLICATION_NAME
+
+
+### 		Authentication
+
+​	The following environment variables alter the action of the 2FA manager
+
+```
+- 2FA_FROM_EMAIL
+- 2FA_APPLICATION_NAME
+```
+
+
+
+---
+
+
 
 ## API Documentation
 

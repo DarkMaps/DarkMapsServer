@@ -25,7 +25,7 @@ class MessageList(APIView):
 
         # Check correct arguments provided
         if not 'requestedDeviceRegistrationID' in kwargs:
-            return errors.incorrect_arguments
+            return errors.incorrectArguments("The request URL must include the user's own registration ID.")
 
         # Check device exists and owned by user
         if not hasattr(user, "device"):
@@ -39,18 +39,18 @@ class MessageList(APIView):
         serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # User can post messages. Note: The message sender is not recorded, if you want this to be visible to the recipient you  must encrypt it within the message content
+    # User can post messages.
     def post(self, request, **kwargs):
 
         # Check correct arguments provided
         if not 'requestedDeviceRegistrationID' in kwargs:
-            return errors.incorrect_arguments
+            return errors.incorrectArguments("The request URL must include the user's own registration ID.")
         if not (hasattr(request, "data") & isinstance(request.data, object) & (not isinstance(request.data, list))):
-            return errors.incorrect_arguments
+            return errors.incorrectArguments("The request body must include the message in JSON object format.")
         if not (("recipient" in request.data) & isinstance(request.data["recipient"], str)):
-            return errors.incorrect_arguments
+            return errors.incorrectArguments("The request body must include the recipient's email address in the 'recipient' field.")
         if not (("message" in request.data) & isinstance(request.data["message"], str)):
-            return errors.incorrect_arguments
+            return errors.incorrectArguments("The request body must include the message content in the 'message' field.")
 
         ownUser = self.request.user
         recipientEmail = request.data["recipient"]
@@ -59,14 +59,9 @@ class MessageList(APIView):
             return errors.invalid_recipient_email
 
         try:
-            messageData = request.data["message"]
+            messageDataParsed = json.loads(request.data['message'])
         except:
-            return errors.incorrect_arguments
-
-        try:
-            messageDataParsed = json.loads(messageData)
-        except:
-            return errors.incorrect_arguments
+            return errors.incorrectArguments("The request body must include the message content in JSON string format in the 'message' field.")
         
         # Check device exists and owned by user
         if not hasattr(ownUser, "device"):
@@ -93,7 +88,7 @@ class MessageList(APIView):
         if not (recipientUser.device.registrationId == int(messageDataParsed['registrationId'])):
             return errors.recipient_identity_changed
 
-        serializer = MessageSerializer(data={'content': messageData, 'senderAddress':ownUser.device.address , 'senderRegistrationId':ownUser.device.registrationId}, context={'recipientDevice': recipientDevice})
+        serializer = MessageSerializer(data={'content': request.data['message'], 'senderAddress':ownUser.device.address , 'senderRegistrationId':ownUser.device.registrationId}, context={'recipientDevice': recipientDevice})
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else: 
@@ -105,9 +100,9 @@ class MessageList(APIView):
 
         # Check correct arguments provided
         if not 'requestedDeviceRegistrationID' in kwargs:
-            return errors.incorrect_arguments
+            return errors.incorrectArguments("The request URL must include the user's own registration ID.")
         if not (hasattr(request, "data") & isinstance(request.data, list) & len(request.data) > 0):
-            return errors.incorrect_arguments
+            return errors.incorrectArguments("The request body must include the message IDs to be deleted in list format.")
 
         user = self.request.user
         messageList = request.data
@@ -143,7 +138,7 @@ class DeviceView(APIView):
         # Check correct arguments provided
         # Note - do not verify registrationID here as device should not exist
         if not (hasattr(request, "data") & isinstance(request.data, object)):
-            return error.incorrect_arguments
+            return errors.incorrectArguments("The request body must include the device details in JSON object format.")
 
         user = self.request.user
 
@@ -155,7 +150,7 @@ class DeviceView(APIView):
         serializer = DeviceSerializer(data=deviceData, context={'user': user})
 
         if not serializer.is_valid():
-            return errors.invalidData(serializer.errors)
+            return errors.invalidSerializerData(serializer.errors)
             
         serializer.save()
         return Response({"code": "device_created", "message": "Device successfully created"}, status=status.HTTP_201_CREATED)
@@ -182,7 +177,7 @@ class PreKeyBundleView(APIView):
 
         # Check correct arguments provided
         if not (('recipientAddress' in kwargs) & ('ownDeviceRegistrationID' in kwargs)):
-            return errors.incorrect_arguments
+            return errors.incorrectArguments("The request URL must include the recipient's address and the sender's registration ID")
             
         if not (isinstance(kwargs['recipientAddress'], str)):
             return errors.invalid_recipient_address
@@ -201,7 +196,7 @@ class PreKeyBundleView(APIView):
         try:
             recipientAddress=bytearray.fromhex(kwargs['recipientAddress']).decode()
         except:
-            return errors.incorrect_arguments
+            return errors.incorrectArguments("The recipient's address must be encoded in HEX format")
         try:
             device = Device.objects.get(address=recipientAddress)
         except:
@@ -237,9 +232,9 @@ class UserPreKeys(APIView):
 
             # Check correct arguments provided
             if not 'requestedDeviceRegistrationID' in kwargs:
-                return errors.incorrect_arguments
+                return errors.incorrectArguments("The request URL must include the user's own registration ID")
             if not (hasattr(request, "data") & isinstance(request.data, list) & len(request.data) > 0):
-                return errors.incorrect_arguments
+                return errors.incorrectArguments("The request body must be in list format and have a length of at least one.")
 
              # Check device exists and owned by user
             if not hasattr(user, "device"):
@@ -255,7 +250,7 @@ class UserPreKeys(APIView):
                 serializer = PreKeySerializer(data=x, context={'user': user, 'registrationId': user.device.registrationId})
 
                 if not serializer.is_valid():
-                    return errors.invalidData(serializer.errors)
+                    return errors.invalidSerializerData(serializer.errors)
 
                 serializer.save()
 
@@ -278,9 +273,9 @@ class UserSignedPreKeys(APIView):
 
         # Check correct arguments provided
         if not 'requestedDeviceRegistrationID' in kwargs:
-            return errors.incorrect_arguments
-        if not (hasattr(request, "data") & isinstance(request.data, object)):
-            return errors.incorrect_arguments
+            return errors.incorrectArguments("The request URL must include the user's own registration ID.")
+        if not (hasattr(request, "data") & isinstance(request.data, object) & (not isinstance(request.data, list))):
+            return errors.incorrectArguments("The request body must include the signed prekey in JSON object format.")
 
         # Check device exists and owned by user
         if not hasattr(user, "device"):
@@ -293,7 +288,7 @@ class UserSignedPreKeys(APIView):
         serializer = SignedPreKeySerializer(data=request.data, context={'user': user, 'registrationId': user.device.registrationId})
 
         if not serializer.is_valid():
-            return errors.invalidData(serializer.errors)
+            return errors.invalidSerializerData(serializer.errors)
             
         user.device.signedprekey.delete()
         serializer.save()

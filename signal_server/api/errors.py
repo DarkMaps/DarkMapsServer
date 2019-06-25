@@ -26,11 +26,6 @@ device_exists = Response({
     "message": "A device has already been created for this user"
 }, status=status.HTTP_403_FORBIDDEN)
 
-incorrect_arguments = Response({
-    "code": "incorrect_arguments",
-    "message": "Incorrect arguments were provided to the API call"
-}, status=status.HTTP_403_FORBIDDEN)
-
 device_changed = Response({
     "code": "device_changed",
     "message": "Own device has changed"
@@ -62,21 +57,32 @@ invalid_recipient_email = Response({
 }, status=status.HTTP_400_BAD_REQUEST)
 
 
-# This error is appended to a list of responses so should NOT be in the Response() format
+# This error is appended to a list of responses when trying to process 
+# multiple messages, so should NOT be in the Response() format
 not_message_owner = {
     "code": "not_message_owner",
     "message": "You do not own one of the messages you are trying to delete"
 }
 
-# This error is appended to a list of responses so should NOT be in the Response() format
+# This error is appended to a list of responses when trying to process 
+# multiple messages, so should NOT be in the Response() format
 non_existant_message = {
     "code": "non-existant_message",
     "message": "One of the messages you are trying to delete does not exist"
 }
 
-def invalidData(errors):
+def incorrectArguments(explanation):
+    data = {
+        "code": "incorrect_arguments",
+        "message": "Incorrect arguments were provided in the request"
+    }
+    if explanation:
+        data['explanation'] = explanation
+    return Response(data, status=status.HTTP_403_FORBIDDEN)
+
+def invalidSerializerData(errors):
     return Response({
         "code": "invalid_data",
-        "message": "Invalid data provided",
+        "message": "Invalid data provided was provided in the request",
         "errors": errors
     }, status=status.HTTP_400_BAD_REQUEST)
