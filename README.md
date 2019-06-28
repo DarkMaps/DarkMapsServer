@@ -18,7 +18,7 @@ This repository contains a simple server providing REST API calls to manage a me
 
 
 
-##TODO
+## TODO
 - Check error codes
 - Caching
 - DOCUMENTATION
@@ -108,8 +108,6 @@ Using this container safely in production requires a few extra variables to be s
 
 ​		
 
-
-
 ### 		Authentication
 
 ​	The following environment variables alter the action of the 2FA manager
@@ -127,7 +125,7 @@ Using this container safely in production requires a few extra variables to be s
 
 ## API Documentation
 
-Note: Where the device registrationId is sent to the server it is always the transmitting user's registration ID, no the recipient.
+Note: Where the device registrationId is sent to the server it is the sending user's registration ID that is included, not the recipient.
 
 ### User Management
 
