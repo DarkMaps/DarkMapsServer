@@ -213,11 +213,15 @@ TRENCH_AUTH = {
 
 # Caching
 memcache_settings = {
-    'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-    'LOCATION': os.environ.get('MEMCACHE_LOCATION', '127.0.0.1:11211')
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': os.environ.get('MEMCACHE_LOCATION', 'mc')
+    }
 }
 local_cache_settings = {
-    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
+    }
 }
 CACHES = {}
 if (os.environ.get('MEMCACHE_LOCATION', False)):

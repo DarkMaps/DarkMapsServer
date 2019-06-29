@@ -1,6 +1,9 @@
 version: '3'
 
 services:
+  mc:
+    image: memcached
+
   db:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
@@ -18,5 +21,8 @@ services:
       - "8000:8000"
     depends_on:
       - "db"
+      - "mc"
+    environment:
+      - MEMCACHE_LOCATION=mc
     command: bash -c "sleep 60 && python manage.py migrate && ./start.sh"
     # command: bash -c "sleep 60 && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
