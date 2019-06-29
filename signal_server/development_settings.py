@@ -30,3 +30,9 @@ REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] ={
     'user': '10000/second',
     'preKeyBundle': '10000/second'
 }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
