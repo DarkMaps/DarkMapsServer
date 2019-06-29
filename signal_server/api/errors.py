@@ -56,6 +56,11 @@ invalid_recipient_email = Response({
     "message": "The email provided for the recipient is incorrectly formatted"
 }, status=status.HTTP_400_BAD_REQUEST)
 
+error_incrementing = Response({
+    "code": "error_incrementing",
+    "message": "There was an error incrementing the signing counter"
+}, status=status.HTTP_400_BAD_REQUEST)
+
 
 # This error is appended to a list of responses when trying to process 
 # multiple messages, so should NOT be in the Response() format

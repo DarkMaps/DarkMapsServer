@@ -8,7 +8,6 @@ from urllib.parse import quote
 class TokenAuthenticationWithSignature(TokenAuthentication):
 
     def authenticate(self, request):
-        print("Checking signature")
         user_auth_tuple = super().authenticate(request)
 
         if user_auth_tuple is None:
@@ -35,7 +34,6 @@ class TokenAuthenticationWithSignature(TokenAuthentication):
             bodyString = json.dumps(json.loads(request.body), ensure_ascii=False, indent=None, separators=(',', ':'))
             bodyString = quote(bodyString.encode("utf-8"), safe='()!*\'')
             signatureString = signatureString + bodyString
-        print(signatureString)
 
         # Get signingKey
         signingKey = base64.b64decode(user.device.signingKey)
@@ -45,7 +43,5 @@ class TokenAuthenticationWithSignature(TokenAuthentication):
             verifyKey.verify(str.encode(signatureString), base64.b64decode(request.headers['Signature']))
         except BadSignatureError:
             return None
-
-        print("Verified")
             
         return (user, token)
