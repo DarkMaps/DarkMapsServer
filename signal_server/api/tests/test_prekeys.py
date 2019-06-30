@@ -68,7 +68,7 @@ class PrekeysTestCase(TestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.device.prekey_set.count(), 1)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data['code'], 'invalid_data')
+        self.assertEqual(response.data['code'], 'incorrect_arguments')
 
     def test_prekeys_changed_registration_id(self):
         """Prekeys for an incorrect identity cannot be updated"""

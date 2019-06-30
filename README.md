@@ -462,7 +462,7 @@ Errors:
 Requires token authentication.
 
 ```
-/messages/<Sending user's device ID> POST
+/messages/<Sending user's device ID>/ POST
 
 Body:
 {
@@ -538,7 +538,7 @@ Errors:
 Gets all outstanding messages for the signed in user. Requires token authentication.
 
 ```
-/messages/<Receiving user's registration ID> GET
+/messages/<Receiving user's registration ID>/ GET
 
 Success <HTTP 200>:
 	[
@@ -581,7 +581,7 @@ Errors:
 Deletes a message owned by the signed in user. Requires token authentication.
 
 ```
-/messages/<User's own registration ID
+/messages/<User's own registration ID>/
 
 Body:
 [
@@ -627,33 +627,149 @@ Errors:
 
 ## Keys
 
-**/prekeybundle/<recipientEmail>/<deviceRegistrationID> GET**
+**Get a prekey bundle**
 
-Gets a prekey bundle in anticipation of sending an initial message. Requires JWT authentication.
+Allows a user to retrieve a prekey bundle for another user prior to starting communications. Requires token authentication.
 
-**prekeys/<deviceRegistrationID> POST**
-
-Send a list of new prekeys to the server. Requires JWT authentication.
-Body:
 ```
-[
+/prekeybundle/<recipient email>/<sender's device registration ID>/ GET
+
+Success <HTTP 200>:
 	{
-		keyId: <Integer>,
-		publicKey: <String>
+		address: <String>,
+		identityKey: <String>,
+		registrationId: <Integer>,
+		preKey: <String>,
+		signedPreKey: <String>
 	}
-]
+	
+Errors:
+	Incorrect arguments provided:
+		<HTTP 403>
+		{
+    	code: 'incorrect_arguments',
+      message: 'Incorrect arguments were provided in the request',
+      explanation: <An explanation of the errors - optional>
+    }
+  Receiving user has no registered device:
+  	<HTTP 404>
+  	{
+      code: 'no_device',
+      message: 'User has not yet registered a device'
+  	}
+  Receiving user's device has changed:
+  	<HTTP 403>
+  	{
+     	code: 'device_changed',
+      message: 'Own device has changed'
+  	}
+  The recipient does not have a registered device:
+  	<HTTP 404>
+  	{
+      code: 'no_recipient_device',
+      message: 'Recipient has not yet registered a device'
+		}
 ```
 
-**signedprekey/<deviceRegistrationID> POST**
 
-Send a new signed prekey to the server. Requires JWT authentication.
+
+**Provide new prekeys**
+
+Send a list of new prekeys to the server. Requires token authentication.
+```
+/prekeys/<sender's device registration ID>/ POST
+
 Body:
+  [
+    {
+      keyId: <Integer>,
+      publicKey: <String>
+    },
+    ...
+  ]
+  
+Success <HTTP 200>:
+	{
+		"code": "prekeys_stored", 
+		"message": "Prekeys successfully stored"
+	}
+	
+Errors:
+	Incorrect arguments provided:
+		<HTTP 403>
+		{
+    	code: 'incorrect_arguments',
+      message: 'Incorrect arguments were provided in the request',
+      explanation: <An explanation of the errors - optional>
+    }
+    NOTE: This will be returned if any of the prekeys you provided was invalid.
+  Sending user has no registered device:
+  	<HTTP 404>
+  	{
+      code: 'no_device',
+      message: 'User has not yet registered a device'
+  	}
+  Sending user's device has changed:
+  	<HTTP 403>
+  	{
+     	code: 'device_changed',
+      message: 'Own device has changed'
+  	}
+  The maximum number of allowed prekeys has already been stored:
+  	<HTTP 400>
+  	{
+      code: 'reached_max_prekeys',
+      message: 'User has reached the maximum number of prekeys allowed'
+  	}
+  One of the provided prekey's IDs already exists
+  	<HTTP 400>
+  	{
+      code: 'prekey_id_exists',
+      message: 'A prekey with that keyId already exists'
+  	}
 ```
-{
-	keyId: <Integer>,
-	publicKey: <String>,
-	signature: <String>
-}
+
+
+
+**Provide a new signed pre key**
+
+Send a new signed prekey to the server. Requires token authentication.
+```
+/signedprekeys/<sender's device registration ID>/ POST
+
+Body:
+  {
+    keyId: <Integer>,
+    publicKey: <String>,
+    signature: <String>
+  }
+  
+Success <HTTP 200>:
+	{
+		code: 'signed_prekey_stored', 
+		message: 'Signed prekey successfully stored'
+	}
+	
+Errors:
+	Incorrect arguments provided:
+		<HTTP 403>
+		{
+    	code: 'incorrect_arguments',
+      message: 'Incorrect arguments were provided in the request',
+      explanation: <An explanation of the errors - optional>
+    }
+  Sending user has no registered device:
+  	<HTTP 404>
+  	{
+      code: 'no_device',
+      message: 'User has not yet registered a device'
+  	}
+  Sending user's device has changed:
+  	<HTTP 403>
+  	{
+     	code: 'device_changed',
+      message: 'Own device has changed'
+  	}
 ```
 
 

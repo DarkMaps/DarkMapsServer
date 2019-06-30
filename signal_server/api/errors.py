@@ -36,11 +36,6 @@ recipient_identity_changed = Response({
     "message": "Recipients device has changed"
 }, status=status.HTTP_403_FORBIDDEN)
 
-invalid_recipient_address = Response({
-    "code": "invalid_recipient_address",
-    "message": "Recipients address was invalid"
-}, status=status.HTTP_400_BAD_REQUEST)
-
 reached_max_prekeys = Response({
     "code": "reached_max_prekeys",
     "message": "User has reached the maximum number of prekeys allowed"

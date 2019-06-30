@@ -66,7 +66,7 @@ class DeviceTestCase(TestCase):
         self.user.refresh_from_db()
         self.assertEqual(hasattr(self.user, 'device'), False)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data['code'], 'invalid_data')
+        self.assertEqual(response.data['code'], 'incorrect_arguments')
 
     def test_single_device_creation(self):
         """Creating a second device will be rejected"""

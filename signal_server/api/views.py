@@ -180,7 +180,7 @@ class PreKeyBundleView(APIView):
             return errors.incorrectArguments("The request URL must include the recipient's address and the sender's registration ID")
             
         if not (isinstance(kwargs['recipientAddress'], str)):
-            return errors.invalid_recipient_address
+            return errors.incorrectArguments("The recipient's address must be provided as a string")
 
         # Check device exists and owned by user
         if not hasattr(ownUser, "device"):
@@ -190,8 +190,7 @@ class PreKeyBundleView(APIView):
         if int(kwargs['ownDeviceRegistrationID']) != ownUser.device.registrationId:
             return errors.device_changed
 
-        # Check recipient user exists
-        recipientUser = {}
+
         # Decode hex
         try:
             recipientAddress=bytearray.fromhex(kwargs['recipientAddress']).decode()

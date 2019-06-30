@@ -169,7 +169,7 @@ class MessageTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(isinstance(response.data, list), True)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['code'], 'not_message_owner')
+        self.assertEqual(response.data[0], 'not_message_owner')
 
     def test_put_message(self):
         """The /messages PUT method should fail"""
