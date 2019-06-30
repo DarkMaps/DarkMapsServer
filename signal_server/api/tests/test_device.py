@@ -13,7 +13,7 @@ class DeviceTestCase(TestCase):
 
     def test_device_creation(self):
         """A device can be created in the correct format"""
-        response = self.client.post('/device/', {
+        response = self.client.post('/devices/', {
             'address': 'test.1',
             'identityKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             'signingKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
@@ -46,7 +46,7 @@ class DeviceTestCase(TestCase):
 
     def test_incorrect_device_creation(self):
         """A device cannot be created in the incorrect format"""
-        response = self.client.post('/device/', {
+        response = self.client.post('/devices/', {
             'address': 'test.1',
             'identityKey': 'abcd',
             'signingKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
@@ -70,7 +70,7 @@ class DeviceTestCase(TestCase):
 
     def test_single_device_creation(self):
         """Creating a second device will be rejected"""
-        response = self.client.post('/device/', {
+        response = self.client.post('/devices/', {
             'address': 'test.1',
             'identityKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             'signingKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
@@ -87,7 +87,7 @@ class DeviceTestCase(TestCase):
                 'signature': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
             }
         }, format='json')
-        response = self.client.post('/device/', {
+        response = self.client.post('/devices/', {
             'address': 'test.2',
             'identityKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             'signingKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
@@ -112,7 +112,7 @@ class DeviceTestCase(TestCase):
 
     def test_device_deletion(self):
         """A device can be deleted"""
-        response = self.client.post('/device/', {
+        response = self.client.post('/devices/', {
             'address': 'test.1',
             'identityKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             'signingKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
@@ -129,7 +129,7 @@ class DeviceTestCase(TestCase):
                 'signature': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
             }
         }, format='json')
-        response = self.client.delete('/device/1234/')
+        response = self.client.delete('/devices/1234/')
         self.user.refresh_from_db()
         self.assertEqual(hasattr(self.user, 'device'), False)
         self.assertEqual(response.status_code, 204)
@@ -137,12 +137,12 @@ class DeviceTestCase(TestCase):
 
     def test_device_put(self):
         """The /device PUT method should fail"""
-        response = self.client.put('/device/', {}, format='json')
+        response = self.client.put('/devices/', {}, format='json')
         self.assertEqual(response.status_code, 405)
 
     def test_device_get(self):
         """The /device GET method should fail"""
-        response = self.client.get('/device/', format='json')
+        response = self.client.get('/devices/', format='json')
         self.assertEqual(response.status_code, 405)
 
 

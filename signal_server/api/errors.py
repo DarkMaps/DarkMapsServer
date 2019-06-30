@@ -64,17 +64,11 @@ error_incrementing = Response({
 
 # This error is appended to a list of responses when trying to process 
 # multiple messages, so should NOT be in the Response() format
-not_message_owner = {
-    "code": "not_message_owner",
-    "message": "You do not own one of the messages you are trying to delete"
-}
+not_message_owner = "not_message_owner"
 
 # This error is appended to a list of responses when trying to process 
 # multiple messages, so should NOT be in the Response() format
-non_existant_message = {
-    "code": "non-existant_message",
-    "message": "One of the messages you are trying to delete does not exist"
-}
+non_existant_message = "non-existant_message"
 
 def incorrectArguments(explanation):
     data = {
@@ -87,7 +81,7 @@ def incorrectArguments(explanation):
 
 def invalidSerializerData(errors):
     return Response({
-        "code": "invalid_data",
-        "message": "Invalid data provided was provided in the request",
-        "errors": errors
+        "code": "incorrect_arguments",
+        "message": "Incorrect arguments were provided in the request",
+        "explanation": errors
     }, status=status.HTTP_400_BAD_REQUEST)

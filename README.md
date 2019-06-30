@@ -368,33 +368,85 @@ Success <HTTP 200>:
 
 ### Devices
 
-**/device/ POST**
 
-Create a new device. Requires JWT authentication.
-Body:
+
+**Create a device**
+
+Requires token authentication
+
 
 ```
+/devices/ POST
+
+Body:
 {
-	address: <String>,
-	identityKey: <String>,
-	registrationId: <Integer>,
+	address: <String - The device address>,
+	identityKey: <String - The identity key, length 32 characters>,
+	registrationId: <Integer - The device registration ID>,
+	signingKey: <String - Thie device signing key, length 32 characters>
 	preKeys: [
 		{
 			keyId: <Integer>,
-			publicKey: <String>
+			publicKey: <String - Length 32 characters>
 		}
 	],
 	signedPreKey: {
 		keyId: <Integer>,
-		publicKey: <String>,
-		signature: <String>
+		publicKey: <String - Length 32 characters>,
+		signature: <String - Length 64 characters>
 	}
 }
+
+Success <HTTP 201>:
+	{
+		code: 'device_created',
+		message: 'Device successfully created'
+	}
+	
+Errors:
+
+	Incorrect arguments provided:
+		<HTTP 403>
+		{
+    	code: 'incorrect_arguments',
+      message: 'Incorrect arguments were provided in the request',
+      explanation: <An explanation of the errors - optional>
+    }
+    
+  Device already exists:
+  	<HTTP 403>
+  	{
+      code: 'device_exists',
+      message: 'A device has already been created for this user'
+  	}
+
 ```
 
-**/device DELETE**
 
-Deletes a device. Requires JWT authentication
+
+**Delete a device**
+
+Requires token authentication
+
+
+
+```
+/devices/ DELETE
+
+Body: <None>
+
+Success <HTTP 204>
+
+Errors:
+
+	No device available to delete:
+		<HTTP 404>
+		{
+      code: 'no_device',
+      message: 'User has not yet registered a device'
+  	}
+```
+
 
 
 
@@ -403,30 +455,170 @@ Deletes a device. Requires JWT authentication
 
 ### Messages
 
-**/messages/<deviceRegistrationID> POST**
 
-Sends a new message. Requires JWT authentication.
+
+**Send a new message**
+
+Requires token authentication.
+
+```
+/messages/<Sending user's device ID> POST
+
 Body:
-
-```
 {
-	recipient: <String>,
-	message: <String>
+	recipient: <String - The email address of the recipient in plain text>,
+	message: <String - A JSON string in the format below>
 }
+
+JSON Message String:
+{
+	registrationID: <Integer - The recipient's registration ID>,
+	content: <Sring - The actual message content>
+}
+
+Success <HTTP 201>:
+	{
+		id: <Integer>,
+		content: <String>,
+		senderAddress: <String>
+		senderRegistrationId: <Integer>
+		recipientAddress: <String>
+	}
+	
+Errors:
+	Incorrect arguments provided:
+		<HTTP 403>
+		{
+    	code: 'incorrect_arguments',
+      message: 'Incorrect arguments were provided in the request',
+      explanation: <An explanation of the errors - optional>
+    }
+  Invalid recipient email:
+  	<HTTP 400>
+  	{
+      code: 'invalid_recipient_email',
+      message: 'The email provided for the recipient is incorrectly formatted'
+  	}
+  Sending user has no registered device:
+  	<HTTP 404>
+  	{
+      code: 'no_device',
+      message: 'User has not yet registered a device'
+  	}
+  Sending user's device has changed:
+  	<HTTP 403>
+  	{
+     	code: 'device_changed',
+      message: 'Own device has changed'
+  	}
+  Recipient doesn't exist:
+  	<HTTP 404>
+  	{
+      code: 'no_recipient',
+      message: 'The recipient for your message does not exist'
+  	}
+  Recipient doesn't have a registered device
+  	<HTTP 404>
+  	{
+      code: 'no_recipient_device',
+      message: 'Recipient has not yet registered a device'
+  	}
+  The recipient's device has changed
+  	<HTTP 403>
+  	{
+      code: 'recipient_identity_changed',
+      message: 'Recipients device has changed'
+  	}
 ```
 
-**/messages/<deviceRegistrationID> GET**
 
-Gets all outstanding messages for a user. Requires JWT authentication.
 
-**/messages/<deviceRegistrationID> DELETE**
+**Get messages for user**
 
-Deletes a message owned by the user. Requires JWT authentication.
+Gets all outstanding messages for the signed in user. Requires token authentication.
 
 ```
+/messages/<Receiving user's registration ID> GET
+
+Success <HTTP 200>:
+	[
+		{
+			id: <Integer>,
+			created: <Date>,
+			content: <String>,
+			senderRegistrationId: <Integer>,
+			senderAddress: <String>
+		},
+		...
+	]
+	
+Errors:
+	Incorrect arguments provided:
+		<HTTP 403>
+		{
+    	code: 'incorrect_arguments',
+      message: 'Incorrect arguments were provided in the request',
+      explanation: <An explanation of the errors - optional>
+    }
+  Receiving user has no registered device:
+  	<HTTP 404>
+  	{
+      code: 'no_device',
+      message: 'User has not yet registered a device'
+  	}
+  Receiving user's device has changed:
+  	<HTTP 403>
+  	{
+     	code: 'device_changed',
+      message: 'Own device has changed'
+  	}
+```
+
+
+
+**Delete a message**
+
+Deletes a message owned by the signed in user. Requires token authentication.
+
+```
+/messages/<User's own registration ID
+
+Body:
 [
-	<messageId>
+	<messageId>,
+	...
 ]
+
+Success <HTTP 200>:
+[
+	<Response>
+]
+
+For each message id passed to the delete method one of the following responses can be provided:
+	1) 'message_deleted'
+	2) 'not_message_owner'
+	3) 'non-existant_message'
+	
+Errors:
+	Incorrect arguments provided:
+		<HTTP 403>
+		{
+    	code: 'incorrect_arguments',
+      message: 'Incorrect arguments were provided in the request',
+      explanation: <An explanation of the errors - optional>
+    }
+  Receiving user has no registered device:
+  	<HTTP 404>
+  	{
+      code: 'no_device',
+      message: 'User has not yet registered a device'
+  	}
+  Receiving user's device has changed:
+  	<HTTP 403>
+  	{
+     	code: 'device_changed',
+      message: 'Own device has changed'
+  	}
 ```
 
 

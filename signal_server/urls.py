@@ -23,10 +23,10 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     # API URLs
     url(r'^messages/(?P<requestedDeviceRegistrationID>[0-9]+)/$', views.MessageList.as_view()),
-    url(r'^device/', views.DeviceView.as_view()),
-    url(r'^prekeybundle/(?P<recipientAddress>[0-9A-Za-z./=+]+)/(?P<ownDeviceRegistrationID>[0-9]+)/$', views.PreKeyBundleView.as_view()),
+    url(r'^devices/', views.DeviceView.as_view()),
+    url(r'^prekeybundles/(?P<recipientAddress>[0-9A-Za-z./=+]+)/(?P<ownDeviceRegistrationID>[0-9]+)/$', views.PreKeyBundleView.as_view()),
     url(r'^prekeys/(?P<requestedDeviceRegistrationID>[0-9]+)/$', views.UserPreKeys.as_view()),
-    url(r'^signedprekey/(?P<requestedDeviceRegistrationID>[0-9]+)/$', views.UserSignedPreKeys.as_view()),
+    url(r'^signedprekeys/(?P<requestedDeviceRegistrationID>[0-9]+)/$', views.UserSignedPreKeys.as_view()),
 
     # Auth URLs
     url(r'^auth/', include('trench.urls')), # Base endpoints
