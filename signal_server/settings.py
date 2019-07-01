@@ -29,7 +29,7 @@ ALLOWED_HOSTS =  os.environ.get('DJANGO_ALLOWED_HOSTS', 'db 127.0.0.1').split()
 
 # Application definition
 INSTALLED_APPS = [
-    'signal_server.api.apps.ApiConfig',
+    'signal_server.api.v1.apps.ApiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'signal_server.api.middleware.SignatureCountMiddleware'
+    'signal_server.api.v1.middleware.SignatureCountMiddleware'
 ]
 
 ROOT_URLCONF = 'signal_server.urls'
@@ -150,7 +150,11 @@ REST_FRAMEWORK = {
         'anon': '3/hour',
         'user': '1000/day',
         'preKeyBundle': '3/day'
-    }
+    },
+    # Versioning
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+    'DEFAULT_VERSION': 'v1',
+    'ALLOWED_VERSIONS': ['v1'],
 }
 
 # Only using REST framework, therefore safe
@@ -172,7 +176,7 @@ CORS_ALLOW_HEADERS = (
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'auth/password/reset/confirm{uid}/{token}',
     'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
-    'SERIALIZERS': {'user_delete': 'signal_server.custom_djoser.serializers.UserDeleteSerializer'}
+    'SERIALIZERS': {'user_delete': 'signal_server.api.v1.custom_djoser.serializers.UserDeleteSerializer'}
 }
 
 # Email
@@ -228,3 +232,4 @@ if (os.environ.get('MEMCACHE_LOCATION', False)):
     CACHES = memcache_settings
 else :
     CACHES = local_cache_settings
+

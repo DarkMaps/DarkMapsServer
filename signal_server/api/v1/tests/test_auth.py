@@ -6,9 +6,9 @@ from django.test import TestCase
 from django.apps import apps
 from rest_framework.test import APIClient, force_authenticate
 from django.contrib.auth import get_user_model
-from signal_server.api.views import DeviceView
+from signal_server.api.v1.views import DeviceView
 from trench.utils import create_otp_code, create_secret
-from signal_server.api.views import Device, PreKey, SignedPreKey
+from signal_server.api.v1.views import Device, PreKey, SignedPreKey
 
 
 class DeviceTestCase(TestCase):
@@ -50,7 +50,7 @@ class DeviceTestCase(TestCase):
 
     def test_sign_up(self):
         """A user can sign up without 2fa"""
-        response = self.client.post('/auth/users/', {
+        response = self.client.post('/v1/auth/users/', {
             "email": "test@test.com",
             "password": "testpassword"
         })
@@ -63,48 +63,48 @@ class DeviceTestCase(TestCase):
 
     def test_log_in_no_2fa(self):
         """User can log in when 2fa not active and authorised call succeeds"""
-        response = self.client.post('/auth/login/', {
+        response = self.client.post('/v1/auth/login/', {
             "email": 'testuser@test.com', 
             "password": 12345})
         self.assertEqual(response.status_code, 200)
         self.assertEqual("auth_token" in response.data, True)
         self.client.credentials(HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
-        response = self.client.get('/auth/users/me/')
+        response = self.client.get('/v1/auth/users/me/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["email"], 'testuser@test.com')
 
     def test_log_out(self):
         """User can log out"""
-        response = self.client.post('/auth/login/', {
+        response = self.client.post('/v1/auth/login/', {
             "email": 'testuser@test.com', 
             "password": 12345})
         self.client.credentials(HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
-        response = self.client.post('/auth/logout/')
+        response = self.client.post('/v1/auth/logout/')
         self.assertEqual(response.status_code, 204)
 
     def test_2fa_activate(self):
         """User can activate 2fa"""
         # Login
-        response = self.client.post('/auth/login/', {
+        response = self.client.post('/v1/auth/login/', {
             "email": 'testuser@test.com', 
             "password": 12345})
         self.client.credentials(HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
         # Activate a method
-        response = self.client.post("/auth/email/activate/", {})
+        response = self.client.post("/v1/auth/email/activate/", {})
         self.assertEqual(response.status_code, 200)
         # Create a code
         MFAMethod = apps.get_model('trench.MFAMethod')
         MFA = MFAMethod.objects.get(user=self.user, name='email')
         code = create_otp_code(MFA.secret)
         # Confirm the method
-        response = self.client.post('/auth/email/activate/confirm/', {
+        response = self.client.post('/v1/auth/email/activate/confirm/', {
             "code": code})
         self.assertEqual(response.status_code, 200)
 
     def test_2fa_login_with_2fa(self):
         """User can log in when 2fa is active and authorised call succeeds"""
         # Get ephemeral token
-        response = self.client.post('/auth/login/', {
+        response = self.client.post('/v1/auth/login/', {
             "email": 'testuser2@test.com', 
             "password": 12345})
         self.assertEqual(response.status_code, 200)
@@ -114,21 +114,21 @@ class DeviceTestCase(TestCase):
         MFA = MFAMethod.objects.get(user=self.user2, name='email')
         code = create_otp_code(MFA.secret)
         # 2FA Login
-        response = self.client.post('/auth/login/code/', {
+        response = self.client.post('/v1/auth/login/code/', {
             "ephemeral_token": response.data['ephemeral_token'], 
             "code": code})
         self.assertEqual(response.status_code, 200)
         self.assertEqual("auth_token" in response.data, True)
         # Check authorised call
         self.client.credentials(HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
-        response = self.client.get('/auth/users/me/')
+        response = self.client.get('/v1/auth/users/me/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["email"], 'testuser2@test.com')
 
     def test_2fa_disable_2fa(self):
         """User can disable a 2fa method"""
         # Get ephemeral token
-        response = self.client.post('/auth/login/', {
+        response = self.client.post('/v1/auth/login/', {
             "email": 'testuser2@test.com', 
             "password": 12345})
         # Create a code
@@ -136,36 +136,36 @@ class DeviceTestCase(TestCase):
         MFA = MFAMethod.objects.get(user=self.user2, name='email')
         code = create_otp_code(MFA.secret)
         # 2FA Login
-        response = self.client.post('/auth/login/code/', {
+        response = self.client.post('/v1/auth/login/code/', {
             "ephemeral_token": response.data['ephemeral_token'], 
             "code": code})
         self.client.credentials(HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
         # Test disable
-        response = self.client.post('/auth/email/deactivate/', {
+        response = self.client.post('/v1/auth/email/deactivate/', {
             "code": code
         })
         self.assertEqual(response.status_code, 204)
         
     def test_user_delete(self):
         """User can delete their record"""
-        response = self.client.post('/auth/login/', {
+        response = self.client.post('/v1/auth/login/', {
             "email": 'testuser@test.com', 
             "password": 12345})
         self.client.credentials(HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
-        response = self.client.delete('/auth/users/me/', {
+        response = self.client.delete('/v1/auth/users/me/', {
             "currentPassword": 12345})
         self.assertEqual(response.status_code, 204)
 
     def test_djoser_token_login_fail(self):
         """The usual djoser token login fails (cannot avoid 2fa)"""
-        response = self.client.post('/auth/token/login/', {
+        response = self.client.post('/v1/auth/token/login/', {
             "email": 'testuser@test.com', 
             "password": 12345})
         self.assertEqual(response.status_code, 404)
 
     def test_djoser_jwt_login_fail(self):
         """The usual djoser jwt login fails (cannot avoid 2fa)"""
-        response = self.client.post('/auth/jwt/create/', {
+        response = self.client.post('/v1/auth/jwt/create/', {
             "email": 'testuser@test.com', 
             "password": 12345})
         self.assertEqual(response.status_code, 404)
@@ -173,13 +173,13 @@ class DeviceTestCase(TestCase):
     def test_request_signing(self):
         """Properly signed requests will succeed"""
         # Login
-        response = self.client.post('/auth/login/', {
+        response = self.client.post('/v1/auth/login/', {
             "email": 'testuser3@test.com', 
             "password": 12345})
         # Create signing details
         privateKey = 'oPHKPY0XHkzxWn2dqB9UGRaAVlWlprrtRrD+rkGI3CE='
         signatureCount = 0
-        encodedUrl = quote('/prekeys/1234/'.encode("utf-8"), safe='')
+        encodedUrl = quote('/v1/prekeys/1234/'.encode("utf-8"), safe='')
         postData = json.dumps(
             [{"keyId": 2, "publicKey": 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'}],
             ensure_ascii=False, indent=None, separators=(',', ':')
@@ -192,7 +192,7 @@ class DeviceTestCase(TestCase):
         signedMessage = base64.b64encode(signedMessage.signature).decode('UTF-8')
         self.client.credentials(HTTP_SIGNATURE=signedMessage, HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
         # Test a response
-        response = self.client.post('/prekeys/1234/', 
+        response = self.client.post('/v1/prekeys/1234/', 
             json.dumps([{"keyId": 2, "publicKey": 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'}]),
             content_type='application/json'
         )
@@ -204,7 +204,7 @@ class DeviceTestCase(TestCase):
     def test_request_signing_incorrect(self):
         """Improperly signed requests will fail"""
         # Login
-        response = self.client.post('/auth/login/', {
+        response = self.client.post('/v1/auth/login/', {
             "email": 'testuser3@test.com', 
             "password": 12345})
         # Create signing details
@@ -224,7 +224,7 @@ class DeviceTestCase(TestCase):
         signedMessage = base64.b64encode(signedMessage.signature).decode('UTF-8')
         self.client.credentials(HTTP_SIGNATURE=signedMessage, HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
         # Test a response
-        response = self.client.post('/prekeys/1234/', 
+        response = self.client.post('/v1/prekeys/1234/', 
             json.dumps([{"keyId": 2, "publicKey": 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'}]),
             content_type='application/json'
         )

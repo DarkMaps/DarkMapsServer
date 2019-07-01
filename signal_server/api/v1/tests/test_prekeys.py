@@ -1,7 +1,7 @@
 from django.test import TestCase
 from rest_framework.test import APIClient, force_authenticate
 from django.contrib.auth import get_user_model
-from signal_server.api.views import UserPreKeys, Device, PreKey, SignedPreKey
+from signal_server.api.v1.views import UserPreKeys, Device, PreKey, SignedPreKey
 
 class PrekeysTestCase(TestCase):
     def setUp(self):
@@ -31,7 +31,7 @@ class PrekeysTestCase(TestCase):
 
     def test_update_prekeys(self):
         """Prekeys on a device can be updated"""
-        response = self.client.post('/prekeys/1234/', [
+        response = self.client.post('/v1/prekeys/1234/', [
             {
                 "keyId": 2,
                 "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
@@ -46,7 +46,7 @@ class PrekeysTestCase(TestCase):
 
     def test_duplicate_prekeys(self):
         """Prekeys with a duplicate keyID cannot be created"""
-        response = self.client.post('/prekeys/1234/', [
+        response = self.client.post('/v1/prekeys/1234/', [
             {
                 "keyId": 1,
                 "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
@@ -59,7 +59,7 @@ class PrekeysTestCase(TestCase):
 
     def test_incorrect_prekeys(self):
         """Prekeys with incorrect format cannot be created"""
-        response = self.client.post('/prekeys/1234/', [
+        response = self.client.post('/v1/prekeys/1234/', [
             {
                 "keyId": 3,
                 "publicKey": "abcd"
@@ -72,7 +72,7 @@ class PrekeysTestCase(TestCase):
 
     def test_prekeys_changed_registration_id(self):
         """Prekeys for an incorrect identity cannot be updated"""
-        response = self.client.post('/prekeys/1235/', [
+        response = self.client.post('/v1/prekeys/1235/', [
             {
                 "keyId": 3,
                 "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
@@ -86,7 +86,7 @@ class PrekeysTestCase(TestCase):
     def test_update_prekeys_no_device(self):
         """Prekeys for an incorrect identity cannot be updated"""
         self.client.force_authenticate(user=self.user2)
-        response = self.client.post('/prekeys/1234/', [
+        response = self.client.post('/v1/prekeys/1234/', [
             {
                 "keyId": 2,
                 "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
@@ -97,15 +97,15 @@ class PrekeysTestCase(TestCase):
 
     def test_prekeys_get(self):
         """The /prekeys GET method should do nothing"""
-        response = self.client.get('/prekeys/1234/', format='json')
+        response = self.client.get('/v1/prekeys/1234/', format='json')
         self.assertEqual(response.status_code, 405)
 
     def test_prekeys_put(self):
         """The /prekeys PUT method should do nothing"""
-        response = self.client.put('/prekeys/1234/', {}, format='json')
+        response = self.client.put('/v1/prekeys/1234/', {}, format='json')
         self.assertEqual(response.status_code, 405)
 
     def test_prekeys_delete(self):
         """The /prekeys DELETE method should do nothing"""
-        response = self.client.delete('/prekeys/1234/', format='json')
+        response = self.client.delete('/v1/prekeys/1234/', format='json')
         self.assertEqual(response.status_code, 405)

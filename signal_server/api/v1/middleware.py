@@ -1,7 +1,7 @@
-from signal_server.api.serializers import DeviceSerializer
+from signal_server.api.v1.serializers import DeviceSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from signal_server.api import errors
+from signal_server.api.v1 import errors
 
 class SignatureCountMiddleware:
     def __init__(self, get_response):

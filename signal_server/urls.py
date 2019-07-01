@@ -13,28 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
+
 
 from django.conf.urls import url, include
-from signal_server.api import views
-from django.contrib.auth import views as auth_views
+from signal_server.api.v1.urls import v1_urlpatterns
+
 
 urlpatterns = [
-    # API URLs
-    url(r'^messages/(?P<requestedDeviceRegistrationID>[0-9]+)/$', views.MessageList.as_view()),
-    url(r'^devices/', views.DeviceView.as_view()),
-    url(r'^prekeybundles/(?P<recipientAddress>[0-9A-Za-z./=+]+)/(?P<ownDeviceRegistrationID>[0-9]+)/$', views.PreKeyBundleView.as_view()),
-    url(r'^prekeys/(?P<requestedDeviceRegistrationID>[0-9]+)/$', views.UserPreKeys.as_view()),
-    url(r'^signedprekeys/(?P<requestedDeviceRegistrationID>[0-9]+)/$', views.UserSignedPreKeys.as_view()),
-
-    # Auth URLs
-    url(r'^auth/', include('trench.urls')), # Base endpoints
-    url(r'^auth/', include('djoser.urls')),
-    url(r'^auth/', include('trench.urls.djoser')),  # for Token Based Authorization
-    url(r'^auth/password/reset/confirm(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', auth_views.PasswordResetConfirmView.as_view()),
-    url(r'^auth/password/reset/done/$', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-
-    # Admin URLs
-    path('admin/', admin.site.urls),
+    url(r'^v1/', include((v1_urlpatterns, 'v1'), namespace='v1')),
 ]

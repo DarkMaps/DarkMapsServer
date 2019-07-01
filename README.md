@@ -41,8 +41,6 @@ This repository contains a simple server providing REST API calls to manage a me
 
 
 ## TODO
-- Check error codes
-- DOCUMENTATION
 - Remove admin interface
 
 
@@ -175,7 +173,7 @@ Authentication is provided using the Django [Djoser](https://djoser.readthedocs.
 **User Sign Up**
 
 ```
-/auth/users/ POST
+/v1/auth/users/ POST
 
 Body:
   {
@@ -196,10 +194,10 @@ Success <HTTP 201>:
 
 The provided auth token should be used in the Authorization HTTP header to authorise all further calls to the server.
 
-Note: With 2FA active the `auth/login/code` method must subsequently be called using the ephemeral token, as defined in the 2FA section.
+Note: With 2FA active the `/v1/auth/login/code` method must subsequently be called using the ephemeral token, as defined in the 2FA section.
 
 ```
-/auth/login/ POST
+/v1/auth/login/ POST
 
 Body:
   {
@@ -228,7 +226,7 @@ Success <HTTP 200>:
 Logs the user out of the server by invalidating their authorization token. Requires token authentication.
 
 ```
-/auth/logout/ POST
+/v1/auth/logout/ POST
 
 Body: <None>
 
@@ -241,7 +239,7 @@ Success <HTTP 204>
 
 Deletes a user and all their associated data. Requires token authentication.
 ```
-/auth/users/me/ DELETE
+/v1/auth/users/me/ DELETE
 
 Body:
   {
@@ -260,7 +258,7 @@ Allows user to reset password by sending an email with a reset link. Does *<u>no
 Note: For security reasons this will always return a 204 code, regardless of whether the email provided is registered on the server.
 
 ```
-/auth/password/reset/ POST
+/v1/auth/password/reset/ POST
 
 Body:
   {
@@ -288,7 +286,7 @@ QR code method: 'app'
 For example, to activate the QR code method a call would be made to the following endpoint:
 
 ```
-/auth/app/activate POST
+/v1/auth/app/activate POST
 ```
 
 
@@ -298,7 +296,7 @@ For example, to activate the QR code method a call would be made to the followin
 Activates a 2FA method. Requires token authentication
 
 ```
-/auth/<method>/activate/ POST
+/v1/auth/<method>/activate/ POST
 
 Body: <None>
 
@@ -312,7 +310,7 @@ Success <HTTP 200>
 Once activated, a 2FA method must be confirmed before it can be used. Requires token authentication.
 
 ```
-/auth/<method>/activate/confirm/ POST
+/v1/auth/<method>/activate/confirm/ POST
 
 Body:
 	{
@@ -329,7 +327,7 @@ Success <HTTP 200>
 Requires token authentication.
 
 ```
-/auth/<method>/deactivate POST
+/v1/auth/<method>/deactivate POST
 
 Body:
 	{
@@ -348,7 +346,7 @@ This is the second step of the 2FA login process, using the ephemeral token prov
 If successful this method will return an auth_token to be used in the Authorization header.
 
 ```
-/auth/login/code/ POST
+/v1/auth/login/code/ POST
 
 Body: 
 	{
@@ -376,7 +374,7 @@ Requires token authentication
 
 
 ```
-/devices/ POST
+/v1/devices/ POST
 
 Body:
 {
@@ -431,7 +429,7 @@ Requires token authentication
 
 
 ```
-/devices/ DELETE
+/v1/devices/ DELETE
 
 Body: <None>
 
@@ -462,7 +460,7 @@ Errors:
 Requires token authentication.
 
 ```
-/messages/<Sending user's device ID>/ POST
+/v1/messages/<Sending user's device ID>/ POST
 
 Body:
 {
@@ -538,7 +536,7 @@ Errors:
 Gets all outstanding messages for the signed in user. Requires token authentication.
 
 ```
-/messages/<Receiving user's registration ID>/ GET
+/v1/messages/<Receiving user's registration ID>/ GET
 
 Success <HTTP 200>:
 	[
@@ -581,7 +579,7 @@ Errors:
 Deletes a message owned by the signed in user. Requires token authentication.
 
 ```
-/messages/<User's own registration ID>/
+/v1/messages/<User's own registration ID>/
 
 Body:
 [
@@ -632,7 +630,7 @@ Errors:
 Allows a user to retrieve a prekey bundle for another user prior to starting communications. Requires token authentication.
 
 ```
-/prekeybundle/<recipient email>/<sender's device registration ID>/ GET
+/v1/prekeybundle/<recipient email>/<sender's device registration ID>/ GET
 
 Success <HTTP 200>:
 	{
@@ -677,7 +675,7 @@ Errors:
 
 Send a list of new prekeys to the server. Requires token authentication.
 ```
-/prekeys/<sender's device registration ID>/ POST
+/v1/prekeys/<sender's device registration ID>/ POST
 
 Body:
   [
@@ -735,7 +733,7 @@ Errors:
 
 Send a new signed prekey to the server. Requires token authentication.
 ```
-/signedprekeys/<sender's device registration ID>/ POST
+/v1/signedprekeys/<sender's device registration ID>/ POST
 
 Body:
   {
