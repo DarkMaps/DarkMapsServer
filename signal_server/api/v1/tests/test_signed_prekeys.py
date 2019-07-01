@@ -31,7 +31,7 @@ class SignedPrekeysTestCase(TestCase):
 
     def test_update_signedprekeys(self):
         """Signed prekeys on a device can be updated"""
-        response = self.client.post('/v1/signedprekeys/1234/', {
+        response = self.client.post('/v1/1234/signedprekeys/', {
                 "keyId": 2,
                 "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
                 "signature": 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
@@ -45,7 +45,7 @@ class SignedPrekeysTestCase(TestCase):
 
     def test_incorrect_signedprekeys(self):
         """Signed prekeys with incorrect format cannot be created"""
-        response = self.client.post('/v1/signedprekeys/1234/', {
+        response = self.client.post('/v1/1234/signedprekeys/', {
                 "keyId": 3,
                 "publicKey": "abcd",
                 "signature": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
@@ -57,7 +57,7 @@ class SignedPrekeysTestCase(TestCase):
 
     def test_signedprekeys_changed_registration_id(self):
         """Signed prekeys for an incorrect identity cannot be updated"""
-        response = self.client.post('/v1/signedprekeys/1235/', {
+        response = self.client.post('/v1/1235/signedprekeys/', {
                 "keyId": 2,
                 "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
                 "signature": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
@@ -70,7 +70,7 @@ class SignedPrekeysTestCase(TestCase):
     def test_signedprekeys_no_device(self):
         """Signed prekeys provided for a user with no device should fail"""
         self.client.force_authenticate(user=self.user2)
-        response = self.client.post('/v1/signedprekeys/1234/', {
+        response = self.client.post('/v1/1235/signedprekeys/', {
                 "keyId": 2,
                 "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
                 "signature": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
@@ -80,15 +80,15 @@ class SignedPrekeysTestCase(TestCase):
 
     def test_signedprekeys_get(self):
         """The /signedprekeys GET method should do nothing"""
-        response = self.client.get('/v1/signedprekeys/1234/', format='json')
+        response = self.client.get('/v1/1234/signedprekeys/', format='json')
         self.assertEqual(response.status_code, 405)
 
     def test_signedprekeys_put(self):
         """The /signedprekeys PUT method should do nothing"""
-        response = self.client.put('/v1/signedprekeys/1234/', {}, format='json')
+        response = self.client.put('/v1/1234/signedprekeys/', {}, format='json')
         self.assertEqual(response.status_code, 405)
 
     def test_signedprekeys_delete(self):
         """The /signedprekeys DELETE method should do nothing"""
-        response = self.client.delete('/v1/signedprekeys/1234/', format='json')
+        response = self.client.delete('/v1/1234/signedprekeys/', format='json')
         self.assertEqual(response.status_code, 405)

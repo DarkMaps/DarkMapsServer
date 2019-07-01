@@ -460,7 +460,7 @@ Errors:
 Requires token authentication.
 
 ```
-/v1/messages/<Sending user's device ID>/ POST
+/v1/<Sending user's device ID>/messages/ POST
 
 Body:
 {
@@ -536,7 +536,7 @@ Errors:
 Gets all outstanding messages for the signed in user. Requires token authentication.
 
 ```
-/v1/messages/<Receiving user's registration ID>/ GET
+/v1/<Receiving user's registration ID>/messages/ GET
 
 Success <HTTP 200>:
 	[
@@ -579,7 +579,7 @@ Errors:
 Deletes a message owned by the signed in user. Requires token authentication.
 
 ```
-/v1/messages/<User's own registration ID>/
+/v1/<User's own registration ID>/messages/
 
 Body:
 [
@@ -675,7 +675,7 @@ Errors:
 
 Send a list of new prekeys to the server. Requires token authentication.
 ```
-/v1/prekeys/<sender's device registration ID>/ POST
+/v1/<sender's device registration ID>/prekeys/ POST
 
 Body:
   [
@@ -733,7 +733,7 @@ Errors:
 
 Send a new signed prekey to the server. Requires token authentication.
 ```
-/v1/signedprekeys/<sender's device registration ID>/ POST
+/v1/<sender's device registration ID>/signedprekeys/ POST
 
 Body:
   {

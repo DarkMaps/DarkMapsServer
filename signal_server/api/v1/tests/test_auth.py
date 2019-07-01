@@ -179,7 +179,7 @@ class DeviceTestCase(TestCase):
         # Create signing details
         privateKey = 'oPHKPY0XHkzxWn2dqB9UGRaAVlWlprrtRrD+rkGI3CE='
         signatureCount = 0
-        encodedUrl = quote('/v1/prekeys/1234/'.encode("utf-8"), safe='')
+        encodedUrl = quote('/v1/1234/prekeys/'.encode("utf-8"), safe='')
         postData = json.dumps(
             [{"keyId": 2, "publicKey": 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'}],
             ensure_ascii=False, indent=None, separators=(',', ':')
@@ -192,7 +192,7 @@ class DeviceTestCase(TestCase):
         signedMessage = base64.b64encode(signedMessage.signature).decode('UTF-8')
         self.client.credentials(HTTP_SIGNATURE=signedMessage, HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
         # Test a response
-        response = self.client.post('/v1/prekeys/1234/', 
+        response = self.client.post('/v1/1234/prekeys/', 
             json.dumps([{"keyId": 2, "publicKey": 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'}]),
             content_type='application/json'
         )
@@ -211,7 +211,7 @@ class DeviceTestCase(TestCase):
         privateKey = 'oPHKPY0XHkzxWn2dqB9UGRaAVlWlprrtRrD+rkGI3CE='
         # NOTE: Deliberately incorrect counter
         signatureCount = 100
-        encodedUrl = quote('/prekeys/1234/'.encode("utf-8"), safe='')
+        encodedUrl = quote('/1234/prekeys/'.encode("utf-8"), safe='')
         postData = json.dumps(
             [{"keyId": 2, "publicKey": 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'}],
             ensure_ascii=False, indent=None, separators=(',', ':')
@@ -224,7 +224,7 @@ class DeviceTestCase(TestCase):
         signedMessage = base64.b64encode(signedMessage.signature).decode('UTF-8')
         self.client.credentials(HTTP_SIGNATURE=signedMessage, HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
         # Test a response
-        response = self.client.post('/v1/prekeys/1234/', 
+        response = self.client.post('/v1/1234/prekeys/', 
             json.dumps([{"keyId": 2, "publicKey": 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'}]),
             content_type='application/json'
         )
