@@ -47,7 +47,6 @@ class DeviceSerializer(serializers.Serializer):
     signingKey = serializers.CharField(max_length=44, min_length=44)
     preKeys = PreKeySerializer(many=True)
     signedPreKey = SignedPreKeySerializer()
-    signatureCount = serializers.IntegerField(min_value=0, max_value=99999999, required=False, default=0)
     def create(self, validated_data):
         user = self.context['user']
         # Limit to max 1 device for security reasons

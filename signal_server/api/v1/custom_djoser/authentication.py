@@ -3,6 +3,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from nacl.exceptions import BadSignatureError
 import nacl.signing
 import base64, json
+import datetime
+import pytz
 from urllib.parse import quote
 
 class TokenAuthenticationWithSignature(TokenAuthentication):
@@ -27,21 +29,40 @@ class TokenAuthenticationWithSignature(TokenAuthentication):
             user.device
         except ObjectDoesNotExist:
             return None
+
+        print("Splitting signature")
+        # Split signature into time and signature
+        signature = request.headers['Signature'].split(":", 1)
+        signatureTime = signature[0]
+        signature = signature[1]
+
+        # Check signature hasn't expired
+        print("Checking expiry")
+        expiryTime = datetime.datetime.now() + datetime.timedelta(minutes=5)
+        expiryTime = expiryTime.timestamp() * 1000
+        if (float(signatureTime) > expiryTime):
+            print("Expiry error")
+            return None
             
         # Create signature string to check
-        signatureString = str(user.device.signatureCount) + quote(request.path.encode("utf-8"), safe='')
-        if (request.method == "POST"):
+        print("Creating string")
+        signatureString = signatureTime + request.method + quote(request.path.encode("utf-8"), safe='')
+        if (request.method == "POST" or request.method == "DELETE"):
             bodyString = json.dumps(json.loads(request.body), ensure_ascii=False, indent=None, separators=(',', ':'))
             bodyString = quote(bodyString.encode("utf-8"), safe='()!*\'')
             signatureString = signatureString + bodyString
 
         # Get signingKey
+        print("Creating key")
         signingKey = base64.b64decode(user.device.signingKey)
         verifyKey = nacl.signing.VerifyKey(signingKey)
 
         try:
-            verifyKey.verify(str.encode(signatureString), base64.b64decode(request.headers['Signature']))
+            print("Verifying")
+            verifyKey.verify(str.encode(signatureString), base64.b64decode(signature))
         except BadSignatureError:
+            print("Verification error")
             return None
             
+        print("Returning")
         return (user, token)

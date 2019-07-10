@@ -379,11 +379,12 @@ The signature is constructed using the steps below:
 
 **Step 1**
 
-The string to be signed is constructed by joining the following strings:
+The string to be signed is constructed by joining the following strings without any joining character:
 
-- The <signatureCount> converted to a string
+- The time since UTC in milliseconds
+- The request method (e.g. POST, GET or DELETE)
 - The url path (e.g. /v1/1234/messages) encoded using the equivalent of JS `encodeURIComponent()`
-- If the request is POST, the message body converted to a JSON string and then encoded using the equivilent of JS `encodeURIComponent()`
+- If the request is POST or DELETE, the message body converted to a JSON string and then encoded using the equivilent of JS `encodeURIComponent()`
 
 
 
@@ -401,7 +402,13 @@ The signature is convered into Base64 encoding for inclusion within the request.
 
 **Step 4**
 
-The Base64 encoded signature is included within the 'Signature' request header.
+The time since UTC in milliseconds is appended to the signature, separated by the ':' character
+
+
+
+**Step 4**
+
+The entire signature string (including the timestamp) is included within the 'Signature' request header.
 
 
 

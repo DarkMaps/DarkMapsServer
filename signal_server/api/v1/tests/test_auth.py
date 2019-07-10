@@ -1,5 +1,7 @@
 import json, base64
 import nacl
+import datetime
+import pytz
 from urllib.parse import quote
 
 from django.test import TestCase
@@ -9,6 +11,7 @@ from django.contrib.auth import get_user_model
 from signal_server.api.v1.views import DeviceView
 from trench.utils import create_otp_code, create_secret
 from signal_server.api.v1.views import Device, PreKey, SignedPreKey
+
 
 
 class DeviceTestCase(TestCase):
@@ -32,8 +35,7 @@ class DeviceTestCase(TestCase):
             address = 'test3.1',
             identityKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             signingKey = '+VelPrSGylnf3KBmyRHfFt0NnV6zRIDmpCpE5/dtHy4=',
-            registrationId = 1234,
-            signatureCount = 0
+            registrationId = 1234
         )
         PreKey.objects.create(
             device = self.device3,
@@ -178,18 +180,20 @@ class DeviceTestCase(TestCase):
             "password": 12345})
         # Create signing details
         privateKey = 'oPHKPY0XHkzxWn2dqB9UGRaAVlWlprrtRrD+rkGI3CE='
-        signatureCount = 0
+        signatureTime = str(datetime.datetime.now().timestamp() * 1000)
+        requestMethod = "POST"
         encodedUrl = quote('/v1/1234/prekeys/'.encode("utf-8"), safe='')
         postData = json.dumps(
             [{"keyId": 2, "publicKey": 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'}],
             ensure_ascii=False, indent=None, separators=(',', ':')
         )
         postData = quote(postData.encode("utf-8"), safe='()!*\'')
-        signingMessage = str(signatureCount) + encodedUrl + postData
+        signingMessage = signatureTime + requestMethod + encodedUrl + postData
         # NB: In the python library you instantiate the signer with a seed, not the private key, hence lengths are different
         signingKey = nacl.signing.SigningKey(base64.b64decode(privateKey))
         signedMessage = signingKey.sign(str.encode(signingMessage))
         signedMessage = base64.b64encode(signedMessage.signature).decode('UTF-8')
+        signedMessage = signatureTime + ":" + signedMessage
         self.client.credentials(HTTP_SIGNATURE=signedMessage, HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
         # Test a response
         response = self.client.post('/v1/1234/prekeys/', 
