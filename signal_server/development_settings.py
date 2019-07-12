@@ -36,3 +36,5 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
+
+SECURE_SSL_REDIRECT = False
