@@ -1,7 +1,7 @@
 certifi==2019.3.9
 cffi==1.12.3
 chardet==3.0.4
-Django==2.2.2
+Django==2.2.4
 django-cors-headers==2.4.0
 django-templated-mail==1.1.1
 django-trench==0.2.2
