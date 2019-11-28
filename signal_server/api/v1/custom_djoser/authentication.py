@@ -1,11 +1,18 @@
-from rest_framework.authentication import TokenAuthentication
-from django.core.exceptions import ObjectDoesNotExist
+"""
+Enforces request signing as appropriate
+"""
+import base64
+import json
+import datetime
+
+from urllib.parse import quote
+
 from nacl.exceptions import BadSignatureError
 import nacl.signing
-import base64, json
-import datetime
-import pytz
-from urllib.parse import quote
+
+from rest_framework.authentication import TokenAuthentication
+
+from django.core.exceptions import ObjectDoesNotExist
 
 class TokenAuthenticationWithSignature(TokenAuthentication):
 
@@ -13,7 +20,7 @@ class TokenAuthenticationWithSignature(TokenAuthentication):
         user_auth_tuple = super().authenticate(request)
 
         if user_auth_tuple is None:
-            return
+            return None
         (user, token) = user_auth_tuple
 
         # Check logged in
@@ -33,6 +40,8 @@ class TokenAuthenticationWithSignature(TokenAuthentication):
         print("Splitting signature")
         # Split signature into time and signature
         signature = request.headers['Signature'].split(":", 1)
+        if len(signature) != 2:
+            return None
         signatureTime = signature[0]
         signature = signature[1]
 
@@ -43,7 +52,7 @@ class TokenAuthenticationWithSignature(TokenAuthentication):
         if (float(signatureTime) > expiryTime):
             print("Expiry error")
             return None
-            
+
         # Create signature string to check
         print("Creating string")
         signatureString = signatureTime + request.method + quote(request.path.encode("utf-8"), safe='')
@@ -63,6 +72,6 @@ class TokenAuthenticationWithSignature(TokenAuthentication):
         except BadSignatureError:
             print("Verification error")
             return None
-            
+
         print("Returning")
         return (user, token)

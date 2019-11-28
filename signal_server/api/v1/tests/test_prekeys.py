@@ -1,7 +1,13 @@
+"""
+Tests for the prekey view
+"""
+
 from django.test import TestCase
-from rest_framework.test import APIClient, force_authenticate
 from django.contrib.auth import get_user_model
-from signal_server.api.v1.views import UserPreKeys, Device, PreKey, SignedPreKey
+
+from rest_framework.test import APIClient
+
+from signal_server.api.v1.views import Device, PreKey, SignedPreKey
 
 class PrekeysTestCase(TestCase):
     def setUp(self):
@@ -11,22 +17,22 @@ class PrekeysTestCase(TestCase):
         self.user2 = User.objects.create_user(email='testusertest@test.com', password='12345')
         self.client.force_authenticate(user=self.user)
         self.device = Device.objects.create(
-            user = self.user,
-            address = 'test.1',
-            identityKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signingKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            registrationId = 1234
+            user=self.user,
+            address='test.1',
+            identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            signingKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            registrationId=1234
         )
         PreKey.objects.create(
-            device = self.device,
-            keyId = 1,
-            publicKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            device=self.device,
+            keyId=1,
+            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         SignedPreKey.objects.create(
-            device = self.device,
-            keyId = 1,
-            publicKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signature = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            device=self.device,
+            keyId=1,
+            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
 
     def test_update_prekeys(self):
@@ -82,7 +88,7 @@ class PrekeysTestCase(TestCase):
         self.assertEqual(self.user.device.prekey_set.count(), 1)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['code'], 'device_changed')
-        
+
     def test_update_prekeys_no_device(self):
         """Prekeys for an incorrect identity cannot be updated"""
         self.client.force_authenticate(user=self.user2)

@@ -1,3 +1,7 @@
+"""
+Global error definitions
+"""
+
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -57,11 +61,11 @@ error_incrementing = Response({
 }, status=status.HTTP_400_BAD_REQUEST)
 
 
-# This error is appended to a list of responses when trying to process 
+# This error is appended to a list of responses when trying to process
 # multiple messages, so should NOT be in the Response() format
 not_message_owner = "not_message_owner"
 
-# This error is appended to a list of responses when trying to process 
+# This error is appended to a list of responses when trying to process
 # multiple messages, so should NOT be in the Response() format
 non_existant_message = "non-existant_message"
 

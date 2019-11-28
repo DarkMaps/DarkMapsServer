@@ -1,3 +1,7 @@
+"""
+Contains customised default serialisers
+"""
+
 from rest_framework import serializers
 
 class CurrentPasswordSerializer(serializers.Serializer):
@@ -11,8 +15,8 @@ class CurrentPasswordSerializer(serializers.Serializer):
         is_password_valid = self.context['request'].user.check_password(value)
         if is_password_valid:
             return value
-        else:
-            self.fail('invalid_password')
+        self.fail('invalid_password')
+        return None
 
 class UserDeleteSerializer(CurrentPasswordSerializer):
     pass

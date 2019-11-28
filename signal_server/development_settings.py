@@ -14,7 +14,7 @@ from .settings import *
 
 DEBUG = True
 
-ALLOWED_HOSTS =  "*"
+ALLOWED_HOSTS = "*"
 
 DATABASES = {
     'default': {
@@ -25,7 +25,7 @@ DATABASES = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] ={
+REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {
     'anon': '10000/second',
     'user': '10000/second',
     'preKeyBundle': '10000/second'

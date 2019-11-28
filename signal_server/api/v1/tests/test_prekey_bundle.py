@@ -1,7 +1,12 @@
+"""
+Tests for the prekey view
+"""
+
 from django.test import TestCase
-from rest_framework.test import APIClient, force_authenticate
 from django.contrib.auth import get_user_model
-from signal_server.api.v1.views import UserPreKeys, Device, PreKey, SignedPreKey, Message
+
+from rest_framework.test import APIClient
+from signal_server.api.v1.views import Device, PreKey, SignedPreKey
 
 class PrekeysTestCase(TestCase):
     def setUp(self):
@@ -11,37 +16,37 @@ class PrekeysTestCase(TestCase):
         self.user1 = User.objects.create_user(email='testuser1@test.com', password='12345')
         self.client.force_authenticate(user=self.user1)
         self.device1 = Device.objects.create(
-            user = self.user1,
-            address = 'test1.1',
-            identityKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signingKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            registrationId = 1234
+            user=self.user1,
+            address='test1.1',
+            identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            signingKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            registrationId=1234
         )
         SignedPreKey.objects.create(
-            device = self.device1,
-            keyId = 1,
-            publicKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signature = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            device=self.device1,
+            keyId=1,
+            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         # Set up user 2
         self.user2 = User.objects.create_user(email='testuser2@test.com', password='12345')
         self.device2 = Device.objects.create(
-            user = self.user2,
-            address = 'test2.1',
-            identityKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signingKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            registrationId = 5678
+            user=self.user2,
+            address='test2.1',
+            identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            signingKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            registrationId=5678
         )
         PreKey.objects.create(
-            device = self.device2,
-            keyId = 1,
-            publicKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            device=self.device2,
+            keyId=1,
+            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         SignedPreKey.objects.create(
-            device = self.device2,
-            keyId = 1,
-            publicKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signature = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            device=self.device2,
+            keyId=1,
+            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         # Set up user 3
         self.user3 = User.objects.create_user(email='testuser3@test.com', password='12345')
@@ -128,6 +133,3 @@ class PrekeysTestCase(TestCase):
         """The /prekeybundle POST method should fail"""
         response = self.client.delete('/v1/prekeybundles/74657374322e31/1235/', format='json')
         self.assertEqual(response.status_code, 405)
-        
-
-    

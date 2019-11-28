@@ -34,7 +34,7 @@ This repository contains a simple server providing REST API calls to manage a me
   - [Messages](#messages)
   - [Keys](#keys)
 
-  
+
 
 ---
 
@@ -55,14 +55,28 @@ Local development using sqlite can easily be initiated using:
 ./development.sh
 ```
 
-**Note:** This requires the python environment to have been correctly set up previously, typically using a virtual environment. For example:
+**Note:** This requires the python environment to have been correctly set up previously, typically using a virtual environment. MySql and mysqlclient must be available for the virtualenv install to be successful. For example:
 ```
+<!-- Install MySql -->
+brew install mysql
+pip3 install mysqlclient
+<!-- Set up VirtualEnv -->
 virtualenv -p python3 .env
 source .env/bin/activate
 pip install -r requirements.txt
 ```
 
 
+
+---
+
+
+
+## Testing
+Automated tests can be initiated using:
+```
+./tests.sh
+```
 
 ---
 
@@ -90,7 +104,7 @@ Using this container safely in production may require the following environment 
 
 
 ### 		Django Secret
-​		Set this by passing an environment variable to your container as 
+​		Set this by passing an environment variable to your container as
 
 ```
 - DJANGO_SECRET_KEY
@@ -148,13 +162,13 @@ Using this container safely in production may require the following environment 
 
 ### Memcache
 
-​	The following environment variables control the cache settings for the server. By default a simple in memory local cache is used. Setting this variable will switch to a memcache server. 
+​	The following environment variables control the cache settings for the server. By default a simple in memory local cache is used. Setting this variable will switch to a memcache server.
 
 ```
 - MEMCACHE_LOCATION
 ```
 
-​		By default only a local cache will be used. This means that in a  rate limiting will not perform correctly, as each 
+​		By default only a local cache will be used. This means that in a  rate limiting will not perform correctly, as each
 
 
 
@@ -180,7 +194,7 @@ Body:
     email: <String - The user's email for login>,
     password: <String - The user's password>
   }
-  
+
 Success <HTTP 201>:
 	{
 		email: <String>,
@@ -210,7 +224,7 @@ Success <HTTP 200>:
 	{
 		auth_token: <String>
 	}
-	
+
 # With 2FA Active
 Success <HTTP 200>:
 	{
@@ -245,7 +259,7 @@ Body:
   {
   	currentPassword: <String>
   }
-  
+
  Success <HTTP 204>
 ```
 
@@ -264,7 +278,7 @@ Body:
   {
     email: <String>
   }
-  
+
 Success <HTTP 204>
 ```
 
@@ -316,7 +330,7 @@ Body:
 	{
 		code: <Integer - A valid 2FA code for the selected method>
 	}
-	
+
 Success <HTTP 200>
 ```
 
@@ -333,7 +347,7 @@ Body:
 	{
 		code: <Integer - A valid 2FA code for the selected method>
 	}
-	
+
 Success <HTTP 204>
 ```
 
@@ -348,12 +362,12 @@ If successful this method will return an auth_token to be used in the Authorizat
 ```
 /v1/auth/login/code/ POST
 
-Body: 
+Body:
 	{
 		ephemeral_token: <String - ephemeral_token provided by first login step>
 		code: <Integer - 2FA code provided by one active method>
 	}
-	
+
 Success <HTTP 200>:
 	{
 		auth_token: <String>
@@ -450,7 +464,7 @@ Success <HTTP 201>:
 		code: 'device_created',
 		message: 'Device successfully created'
 	}
-	
+
 Errors:
 
 	Incorrect arguments provided:
@@ -460,7 +474,7 @@ Errors:
       message: 'Incorrect arguments were provided in the request',
       explanation: <An explanation of the errors - optional>
     }
-    
+
   Device already exists:
   	<HTTP 403>
   	{
@@ -532,7 +546,7 @@ Success <HTTP 201>:
 		senderRegistrationId: <Integer>
 		recipientAddress: <String>
 	}
-	
+
 Errors:
 	Incorrect arguments provided:
 		<HTTP 403>
@@ -599,7 +613,7 @@ Success <HTTP 200>:
 		},
 		...
 	]
-	
+
 Errors:
 	Incorrect arguments provided:
 		<HTTP 403>
@@ -646,7 +660,7 @@ For each message id passed to the delete method one of the following responses c
 	1) 'message_deleted'
 	2) 'not_message_owner'
 	3) 'non-existant_message'
-	
+
 Errors:
 	Incorrect arguments provided:
 		<HTTP 403>
@@ -692,7 +706,7 @@ Success <HTTP 200>:
 		preKey: <String>,
 		signedPreKey: <String>
 	}
-	
+
 Errors:
 	Incorrect arguments provided:
 		<HTTP 403>
@@ -737,13 +751,13 @@ Body:
     },
     ...
   ]
-  
+
 Success <HTTP 200>:
 	{
-		"code": "prekeys_stored", 
+		"code": "prekeys_stored",
 		"message": "Prekeys successfully stored"
 	}
-	
+
 Errors:
 	Incorrect arguments provided:
 		<HTTP 403>
@@ -793,13 +807,13 @@ Body:
     publicKey: <String>,
     signature: <String>
   }
-  
+
 Success <HTTP 200>:
 	{
-		code: 'signed_prekey_stored', 
+		code: 'signed_prekey_stored',
 		message: 'Signed prekey successfully stored'
 	}
-	
+
 Errors:
 	Incorrect arguments provided:
 		<HTTP 403>
@@ -821,5 +835,3 @@ Errors:
       message: 'Own device has changed'
   	}
 ```
-
-

@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 's!c24+@++wmf)0k*r9$d@y=^(l@5t6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS =  os.environ.get('DJANGO_ALLOWED_HOSTS', 'db 127.0.0.1').split()
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'db 127.0.0.1').split()
 
 # Application definition
 INSTALLED_APPS = [
@@ -238,8 +238,7 @@ local_cache_settings = {
     }
 }
 CACHES = {}
-if (os.environ.get('MEMCACHE_LOCATION', False)):
+if os.environ.get('MEMCACHE_LOCATION', False):
     CACHES = memcache_settings
-else :
+else:
     CACHES = local_cache_settings
-

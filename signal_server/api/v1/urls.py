@@ -1,9 +1,13 @@
+"""
+Defines Django URLs
+"""
+
 from django.contrib import admin
 from django.urls import path
-
 from django.conf.urls import url, include
-from signal_server.api.v1 import views as v1_views
 from django.contrib.auth import views as auth_views
+
+from signal_server.api.v1 import views as v1_views
 
 v1_urlpatterns = [
     # API URLs

@@ -1,3 +1,7 @@
+"""
+Configures top level app
+"""
+
 from django.apps import AppConfig
 
 

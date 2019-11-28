@@ -1,3 +1,7 @@
+"""
+Defines Django middleware
+"""
+
 def x_robots_middleware(get_response):
     # One-time configuration and initialization.
 

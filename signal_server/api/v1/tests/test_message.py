@@ -1,7 +1,13 @@
+"""
+Tests for the message view
+"""
+
 from django.test import TestCase
-from rest_framework.test import APIClient, force_authenticate
 from django.contrib.auth import get_user_model
-from signal_server.api.v1.views import UserPreKeys, Device, PreKey, SignedPreKey, Message
+
+from rest_framework.test import APIClient
+
+from signal_server.api.v1.views import Device, PreKey, SignedPreKey, Message
 
 class MessageTestCase(TestCase):
     def setUp(self):
@@ -11,49 +17,49 @@ class MessageTestCase(TestCase):
         self.user1 = User.objects.create_user(email='testuser1@test.com', password='12345')
         self.client.force_authenticate(user=self.user1)
         self.device1 = Device.objects.create(
-            user = self.user1,
-            address = 'test1.1',
-            identityKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signingKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            registrationId = 1234
+            user=self.user1,
+            address='test1.1',
+            identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            signingKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            registrationId=1234
         )
         PreKey.objects.create(
-            device = self.device1,
-            keyId = 1,
-            publicKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            device=self.device1,
+            keyId=1,
+            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         SignedPreKey.objects.create(
-            device = self.device1,
-            keyId = 1,
-            publicKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signature = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            device=self.device1,
+            keyId=1,
+            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         # Set up user 2
         self.user2 = User.objects.create_user(email='testuser2@test.com', password='12345')
         self.device2 = Device.objects.create(
-            user = self.user2,
-            address = 'test2.1',
-            identityKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signingKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            registrationId = 5678
+            user=self.user2,
+            address='test2.1',
+            identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            signingKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            registrationId=5678
         )
         PreKey.objects.create(
-            device = self.device2,
-            keyId = 1,
-            publicKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            device=self.device2,
+            keyId=1,
+            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         SignedPreKey.objects.create(
-            device = self.device2,
-            keyId = 1,
-            publicKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signature = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            device=self.device2,
+            keyId=1,
+            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         # Create test message from user 2 to user 1
         Message.objects.create(
-            recipient = self.device1,
-            content = '{"registrationId": 1234, "content": "test"}',
-            senderRegistrationId = 5678,
-            senderAddress = 'test2.1'
+            recipient=self.device1,
+            content='{"registrationId": 1234, "content": "test"}',
+            senderRegistrationId=5678,
+            senderAddress='test2.1'
         )
 
     def test_send_message(self):
@@ -112,7 +118,7 @@ class MessageTestCase(TestCase):
         self.assertEqual(self.user2.device.received_messages.count(), 0)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['code'], "invalid_recipient_email")
-        
+
 
     def test_no_json_message(self):
         """Messages which do not cotain a JSON string in the content are rejected"""
@@ -149,7 +155,7 @@ class MessageTestCase(TestCase):
         self.assertEqual(self.user1.device.received_messages.count(), 1)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['code'], "device_changed")
-        
+
     def test_no_messages_available(self):
         """Getting messages when none are available returns an empty array"""
         self.client.force_authenticate(user=self.user2)

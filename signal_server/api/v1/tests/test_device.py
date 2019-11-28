@@ -1,7 +1,11 @@
+"""
+Tests for the device view
+"""
+
 from django.test import TestCase
-from rest_framework.test import APIClient, force_authenticate
 from django.contrib.auth import get_user_model
-from signal_server.api.v1.views import DeviceView
+
+from rest_framework.test import APIClient
 
 
 class DeviceTestCase(TestCase):
@@ -144,6 +148,3 @@ class DeviceTestCase(TestCase):
         """The /device GET method should fail"""
         response = self.client.get('/v1/devices/', format='json')
         self.assertEqual(response.status_code, 405)
-
-
-        

@@ -1,7 +1,10 @@
+"""
+Defines Django serialisers
+"""
+
 from rest_framework import serializers
 from signal_server.api.v1.models import Message, Device, PreKey, SignedPreKey
 from django.core.exceptions import PermissionDenied, FieldError
-from rest_framework.validators import UniqueValidator
 
 class MessageSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
@@ -12,11 +15,12 @@ class MessageSerializer(serializers.Serializer):
     def create(self, validated_data):
         recipientDevice = self.context['recipientDevice']
         return Message.objects.create(recipient=recipientDevice, **validated_data)
-    def get_recipient_address(self, obj):
+    @classmethod
+    def get_recipient_address(cls, obj):
         return obj.recipient.address
 
 class PreKeySerializer(serializers.Serializer):
-    keyId = serializers.IntegerField(min_value=0, max_value= 999999)
+    keyId = serializers.IntegerField(min_value=0, max_value=999999)
     publicKey = serializers.CharField(max_length=44, min_length=44)
     def create(self, validated_data):
         user = self.context['user']
@@ -26,7 +30,7 @@ class PreKeySerializer(serializers.Serializer):
         if deviceReference.prekey_set.count() > 99:
             raise PermissionDenied()
         # Check an existing prekey does not have the same ID
-        if not deviceReference.prekey_set.filter(keyId = validated_data['keyId']).count() == 0:
+        if not deviceReference.prekey_set.filter(keyId=validated_data['keyId']).count() == 0:
             raise FieldError()
         return PreKey.objects.create(device=deviceReference, **validated_data)
 
@@ -59,8 +63,8 @@ class DeviceSerializer(serializers.Serializer):
         for x in preKeys:
             PreKey.objects.create(device=deviceReference, **x)
         return deviceReference
-
-    def update(self, instance, validated_data):
+    @classmethod
+    def update(cls, instance, validated_data):
         instance.signatureCount = validated_data.get('signatureCount', instance.signatureCount)
         instance.save()
         return instance
@@ -71,4 +75,3 @@ class PreKeyBundleSerializer(serializers.Serializer):
     registrationId = serializers.IntegerField(min_value=0, max_value=999999)
     preKey = PreKeySerializer(required=False)
     signedPreKey = SignedPreKeySerializer()
-

@@ -1,7 +1,13 @@
+"""
+Tests for the signed prekey view
+"""
+
 from django.test import TestCase
-from rest_framework.test import APIClient, force_authenticate
 from django.contrib.auth import get_user_model
-from signal_server.api.v1.views import UserPreKeys, Device, PreKey, SignedPreKey
+
+from rest_framework.test import APIClient
+
+from signal_server.api.v1.views import Device, PreKey, SignedPreKey
 
 class SignedPrekeysTestCase(TestCase):
     def setUp(self):
@@ -11,30 +17,30 @@ class SignedPrekeysTestCase(TestCase):
         self.user2 = User.objects.create_user(email='testusertest@test.com', password='12345')
         self.client.force_authenticate(user=self.user)
         device = Device.objects.create(
-            user = self.user,
-            address = 'test.1',
-            identityKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signingKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            registrationId = 1234
+            user=self.user,
+            address='test.1',
+            identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            signingKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            registrationId=1234
         )
         PreKey.objects.create(
-            device = device,
-            keyId = 1,
-            publicKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            device=device,
+            keyId=1,
+            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         SignedPreKey.objects.create(
-            device = device,
-            keyId = 1,
-            publicKey = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signature = 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            device=device,
+            keyId=1,
+            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
 
     def test_update_signedprekeys(self):
         """Signed prekeys on a device can be updated"""
         response = self.client.post('/v1/1234/signedprekeys/', {
-                "keyId": 2,
-                "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
-                "signature": 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            "keyId": 2,
+            "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
+            "signature": 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         }, format='json')
         self.user.refresh_from_db()
         self.assertEqual(self.user.device.signedprekey.keyId, 2)
@@ -46,9 +52,9 @@ class SignedPrekeysTestCase(TestCase):
     def test_incorrect_signedprekeys(self):
         """Signed prekeys with incorrect format cannot be created"""
         response = self.client.post('/v1/1234/signedprekeys/', {
-                "keyId": 3,
-                "publicKey": "abcd",
-                "signature": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+            "keyId": 3,
+            "publicKey": "abcd",
+            "signature": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
         }, format='json')
         self.user.refresh_from_db()
         self.assertEqual(self.user.device.signedprekey.keyId, 1)
@@ -58,9 +64,9 @@ class SignedPrekeysTestCase(TestCase):
     def test_signedprekeys_changed_registration_id(self):
         """Signed prekeys for an incorrect identity cannot be updated"""
         response = self.client.post('/v1/1235/signedprekeys/', {
-                "keyId": 2,
-                "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
-                "signature": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+            "keyId": 2,
+            "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
+            "signature": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
         }, format='json')
         self.user.refresh_from_db()
         self.assertEqual(self.user.device.signedprekey.keyId, 1)
@@ -71,9 +77,9 @@ class SignedPrekeysTestCase(TestCase):
         """Signed prekeys provided for a user with no device should fail"""
         self.client.force_authenticate(user=self.user2)
         response = self.client.post('/v1/1235/signedprekeys/', {
-                "keyId": 2,
-                "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
-                "signature": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+            "keyId": 2,
+            "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
+            "signature": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
         }, format='json')
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data['code'], 'no_device')
