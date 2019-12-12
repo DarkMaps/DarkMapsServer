@@ -7,8 +7,7 @@ import datetime
 
 from urllib.parse import quote
 
-from nacl.exceptions import BadSignatureError
-import nacl.signing
+from jose import jws
 
 from rest_framework.authentication import TokenAuthentication
 
@@ -63,13 +62,15 @@ class TokenAuthenticationWithSignature(TokenAuthentication):
 
         # Get signingKey
         print("Creating key")
-        signingKey = base64.b64decode(user.device.signingKey)
-        verifyKey = nacl.signing.VerifyKey(signingKey)
+        signingKey = json.loads(user.device.signingKey)
 
         try:
             print("Verifying")
-            verifyKey.verify(str.encode(signatureString), base64.b64decode(signature))
-        except BadSignatureError:
+            verificationSignatureString = jws.verify(signature, signingKey, 'ES512').decode("utf-8")
+            if (verificationSignatureString != signatureString):
+                raise Exception("verification error")
+        except Exception as e:
+            print(e)
             print("Verification error")
             return None
 

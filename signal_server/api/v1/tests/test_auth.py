@@ -8,7 +8,7 @@ import datetime
 
 from urllib.parse import quote
 
-import nacl
+from jose import jwk, jws
 
 from django.test import TestCase
 from django.apps import apps
@@ -21,7 +21,7 @@ from trench.utils import create_otp_code, create_secret
 
 
 
-class DeviceTestCase(TestCase):
+class AuthTestCase(TestCase):
     def setUp(self):
         self.UserModel = get_user_model()
         self.client = APIClient()
@@ -41,7 +41,7 @@ class DeviceTestCase(TestCase):
             user=self.user3,
             address='test3.1',
             identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signingKey='+VelPrSGylnf3KBmyRHfFt0NnV6zRIDmpCpE5/dtHy4=',
+            signingKey='{\"crv\":\"P-521\",\"ext\":true,\"key_ops\":[\"verify\"],\"kty\":\"EC\",\"x\":\"ANNApLBlVDQsa9fprbeEHsGeNlZ5snJAJfTA7aEY6NjMmAzMEZBKUK-ez1JE-j-3xvvrULjSNOic6iZtpsUqJD4_\",\"y\":\"AFtmaTWOBQ5DulMWCrV-lkSrco0xq6LMq4813Jpte83gncIrtWfIGF1YEHL6g8OsRJoF35L4DXk0AlyxkoYGF9xG\"}',
             registrationId=1234
         )
         PreKey.objects.create(
@@ -186,7 +186,9 @@ class DeviceTestCase(TestCase):
             "email": 'testuser3@test.com',
             "password": 12345})
         # Create signing details
-        privateKey = 'oPHKPY0XHkzxWn2dqB9UGRaAVlWlprrtRrD+rkGI3CE='
+        # I THINK I can use https://python-jose.readthedocs.io/en/latest/jwk/index.html to import keys,
+        # Then https://python-jose.readthedocs.io/en/latest/jws/index.html to sign
+        privateKey = '{\"crv\":\"P-521\",\"d\":\"ABSYL2kcf8y1DqD9C87I5jmmGVmk2m8YZTwM-NJe0hUl5NeWoeg3muU_zOtHIAOTb_l1L9Z_Fq97TVI5M4-zXvZg\",\"ext\":true,\"key_ops\":[\"sign\"],\"kty\":\"EC\",\"x\":\"ANNApLBlVDQsa9fprbeEHsGeNlZ5snJAJfTA7aEY6NjMmAzMEZBKUK-ez1JE-j-3xvvrULjSNOic6iZtpsUqJD4_\",\"y\":\"AFtmaTWOBQ5DulMWCrV-lkSrco0xq6LMq4813Jpte83gncIrtWfIGF1YEHL6g8OsRJoF35L4DXk0AlyxkoYGF9xG\"}'
         signatureTime = str(datetime.datetime.now().timestamp() * 1000)
         requestMethod = "POST"
         encodedUrl = quote('/v1/1234/prekeys/'.encode("utf-8"), safe='')
@@ -196,10 +198,8 @@ class DeviceTestCase(TestCase):
         )
         postData = quote(postData.encode("utf-8"), safe='()!*\'')
         signingMessage = signatureTime + requestMethod + encodedUrl + postData
-        # NB: In the python library you instantiate the signer with a seed, not the private key, hence lengths are different
-        signingKey = nacl.signing.SigningKey(base64.b64decode(privateKey))
-        signedMessage = signingKey.sign(str.encode(signingMessage))
-        signedMessage = base64.b64encode(signedMessage.signature).decode('UTF-8')
+        privateKey = json.loads(privateKey)
+        signedMessage = jws.sign(signingMessage.encode('utf-8'), privateKey, algorithm='ES512')
         signedMessage = signatureTime + ":" + signedMessage
         self.client.credentials(HTTP_SIGNATURE=signedMessage, HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
         # Test a response
@@ -218,20 +218,20 @@ class DeviceTestCase(TestCase):
             "email": 'testuser3@test.com',
             "password": 12345})
         # Create signing details
-        privateKey = 'oPHKPY0XHkzxWn2dqB9UGRaAVlWlprrtRrD+rkGI3CE='
-        # NOTE: Deliberately incorrect counter
-        signatureCount = 100
-        encodedUrl = quote('/1234/prekeys/'.encode("utf-8"), safe='')
+        privateKey = '{\"crv\":\"P-521\",\"d\":\"ABSYL2kcf8y1DqD9C87I5jmmGVmk2m8YZTwM-NJe0hUl5NeWoeg3muU_zOtHIAOTb_l1L9Z_Fq97TVI5M4-zXvZg\",\"ext\":true,\"key_ops\":[\"sign\"],\"kty\":\"EC\",\"x\":\"ANNApLBlVDQsa9fprbeEHsGeNlZ5snJAJfTA7aEY6NjMmAzMEZBKUK-ez1JE-j-3xvvrULjSNOic6iZtpsUqJD4_\",\"y\":\"AFtmaTWOBQ5DulMWCrV-lkSrco0xq6LMq4813Jpte83gncIrtWfIGF1YEHL6g8OsRJoF35L4DXk0AlyxkoYGF9xG\"}'
+        signatureTime = str(datetime.datetime.now().timestamp() * 1000)
+        # Deliberately incorrect post method
+        requestMethod = "GET"
+        encodedUrl = quote('/v1/1234/prekeys/'.encode("utf-8"), safe='')
         postData = json.dumps(
             [{"keyId": 2, "publicKey": 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'}],
             ensure_ascii=False, indent=None, separators=(',', ':')
         )
         postData = quote(postData.encode("utf-8"), safe='()!*\'')
-        signingMessage = str(signatureCount) + encodedUrl + postData
-        # NB: In the python library you instantiate the signer with a seed, not the private key, hence lengths are different
-        signingKey = nacl.signing.SigningKey(base64.b64decode(privateKey))
-        signedMessage = signingKey.sign(str.encode(signingMessage))
-        signedMessage = base64.b64encode(signedMessage.signature).decode('UTF-8')
+        signingMessage = signatureTime + requestMethod + encodedUrl + postData
+        privateKey = json.loads(privateKey)
+        signedMessage = jws.sign(signingMessage.encode('utf-8'), privateKey, algorithm='ES512')
+        signedMessage = signatureTime + ":" + signedMessage
         self.client.credentials(HTTP_SIGNATURE=signedMessage, HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
         # Test a response
         response = self.client.post('/v1/1234/prekeys/',

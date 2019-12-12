@@ -75,7 +75,7 @@ pip install -r requirements.txt
 ## Testing
 Automated tests can be initiated using:
 ```
-./tests.sh
+./test.sh
 ```
 
 ---
