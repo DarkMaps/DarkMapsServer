@@ -11,7 +11,7 @@ class Device(models.Model):
     identityKey = models.CharField(max_length=44, blank=False)
     registrationId = models.PositiveIntegerField(blank=False)
     address = models.CharField(max_length=100, blank=False)
-    signingKey = models.CharField(max_length=44, blank=False)
+    signingKey = models.CharField(max_length=1000, blank=False)
     class Meta:
         unique_together = ('user', 'address',)
 

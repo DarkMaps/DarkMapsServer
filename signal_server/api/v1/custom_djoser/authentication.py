@@ -1,13 +1,21 @@
 """
 Enforces request signing as appropriate
 """
-import base64
+
 import json
 import datetime
+import base64
+import binascii
+import hashlib
 
 from urllib.parse import quote
 
-from jose import jws
+from ecdsa import VerifyingKey, NIST521p
+
+# from cryptography.hazmat.primitives.asymmetric.ec import ECDSA, EllipticCurvePublicNumbers, SECP521R1
+# from cryptography.hazmat.primitives import hashes
+# from cryptography.hazmat.backends import default_backend
+
 
 from rest_framework.authentication import TokenAuthentication
 
@@ -36,7 +44,6 @@ class TokenAuthenticationWithSignature(TokenAuthentication):
         except ObjectDoesNotExist:
             return None
 
-        print("Splitting signature")
         # Split signature into time and signature
         signature = request.headers['Signature'].split(":", 1)
         if len(signature) != 2:
@@ -45,7 +52,6 @@ class TokenAuthenticationWithSignature(TokenAuthentication):
         signature = signature[1]
 
         # Check signature hasn't expired
-        print("Checking expiry")
         expiryTime = datetime.datetime.now() + datetime.timedelta(minutes=5)
         expiryTime = expiryTime.timestamp() * 1000
         if (float(signatureTime) > expiryTime):
@@ -53,7 +59,6 @@ class TokenAuthenticationWithSignature(TokenAuthentication):
             return None
 
         # Create signature string to check
-        print("Creating string")
         signatureString = signatureTime + request.method + quote(request.path.encode("utf-8"), safe='')
         if (request.method == "POST" or request.method == "DELETE"):
             bodyString = json.dumps(json.loads(request.body), ensure_ascii=False, indent=None, separators=(',', ':'))
@@ -61,18 +66,16 @@ class TokenAuthenticationWithSignature(TokenAuthentication):
             signatureString = signatureString + bodyString
 
         # Get signingKey
-        print("Creating key")
-        signingKey = json.loads(user.device.signingKey)
+        signingKey = user.device.signingKey
+        # signingKey = json.loads(user.device.signingKey)
 
         try:
-            print("Verifying")
-            verificationSignatureString = jws.verify(signature, signingKey, 'ES512').decode("utf-8")
-            if (verificationSignatureString != signatureString):
-                raise Exception("verification error")
+            verifyingKey = VerifyingKey.from_string(binascii.unhexlify(signingKey), curve=NIST521p)
+            digest = hashlib.sha256(signatureString.encode('utf-8')).digest()
+            verifyingKey.verify_digest(base64.b64decode(signature), digest)
         except Exception as e:
             print(e)
             print("Verification error")
             return None
 
-        print("Returning")
         return (user, token)

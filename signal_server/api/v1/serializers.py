@@ -48,7 +48,7 @@ class DeviceSerializer(serializers.Serializer):
     identityKey = serializers.CharField(max_length=44, min_length=44)
     address = serializers.CharField(max_length=100)
     registrationId = serializers.IntegerField(min_value=0, max_value=999999)
-    signingKey = serializers.CharField(max_length=44, min_length=44)
+    signingKey = serializers.CharField(max_length=1000, min_length=10)
     preKeys = PreKeySerializer(many=True)
     signedPreKey = SignedPreKeySerializer()
     def create(self, validated_data):
