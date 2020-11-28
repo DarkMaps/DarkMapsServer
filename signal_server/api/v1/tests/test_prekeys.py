@@ -20,7 +20,6 @@ class PrekeysTestCase(TestCase):
             user=self.user,
             address='test.1',
             identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signingKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             registrationId=1234
         )
         PreKey.objects.create(

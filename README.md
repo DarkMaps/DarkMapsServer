@@ -89,6 +89,15 @@ A simple docker compose file is provided for example usage. This creates a simpl
 docker-compose up
 ```
 
+---
+
+
+## Making Migrations
+
+Due to the default database settings when making migrations in development use the following command
+```
+./manage.py makemigrations api --settings=signal_server.development_settings
+```
 
 
 ---
@@ -375,59 +384,6 @@ Success <HTTP 200>:
 ```
 
 
-
-### Request Signing
-
-All requests must be signed using the protocol below apart from:
-
-- Authentication requests
-- Requests to /v1/devices
-
-**All signed requests are indicated using the :key: symbol.**
-
-An incrementing counter <signatureCount> is stored on the device and the server and incremented with each successful signed API request. On device creation this counter is set to 0.
-
-The signature is constructed using the steps below:
-
-
-
-**Step 1**
-
-The string to be signed is constructed by joining the following strings without any joining character:
-
-- The time since UTC in milliseconds
-- The request method (e.g. POST, GET or DELETE)
-- The url path (e.g. /v1/1234/messages) encoded using the equivalent of JS `encodeURIComponent()`
-- If the request is POST or DELETE, the message body converted to a JSON string and then encoded using the equivilent of JS `encodeURIComponent()`
-
-
-
-**Step 2**
-
-The string created above is the signed using the [Ed25519](https://tools.ietf.org/html/rfc8032) algorithm. This is most easily acheived using the [Sodium Library](https://download.libsodium.org/doc/public-key_cryptography/public-key_signatures#algorithm-details). When a new device is created a public / private keypair are created and the public key is sent to the server to validate the signatures. The signing should be performed in 'detatched mode', i.e. without the keys included within the signature.
-
-
-
-**Step 3**
-
-The signature is convered into Base64 encoding for inclusion within the request.
-
-
-
-**Step 4**
-
-The time since UTC in milliseconds is appended to the signature, separated by the ':' character
-
-
-
-**Step 4**
-
-The entire signature string (including the timestamp) is included within the 'Signature' request header.
-
-
-
-
-
 ### Devices
 
 
@@ -515,11 +471,11 @@ Errors:
 
 
 
-### Messages :key:
+### Messages
 
 
 
-**Send a new message** :key:
+**Send a new message**
 
 Requires token authentication and request signing.
 
@@ -595,7 +551,7 @@ Errors:
 
 
 
-**Get messages for user** :key:
+**Get messages for user**
 
 Gets all outstanding messages for the signed in user. Requires token authentication and request signing.
 
@@ -638,7 +594,7 @@ Errors:
 
 
 
-**Delete a message** :key:
+**Delete a message**
 
 Deletes a message owned by the signed in user. Requires token authentication and request signing.
 
@@ -687,9 +643,9 @@ Errors:
 
 
 
-## Keys :key:
+## Keys
 
-**Get a prekey bundle** :key:
+**Get a prekey bundle**
 
 Allows a user to retrieve a prekey bundle for another user prior to starting communications. Requires token authentication and request signing.
 
@@ -737,7 +693,7 @@ Errors:
 
 
 
-**Provide new prekeys **:key:
+**Provide new prekeys **
 
 Send a list of new prekeys to the server. Requires token authentication and request signing.
 ```
@@ -795,7 +751,7 @@ Errors:
 
 
 
-**Provide a new signed pre key** :key:
+**Provide a new signed pre key** 
 
 Send a new signed prekey to the server. Requires token authentication and request signing.
 ```

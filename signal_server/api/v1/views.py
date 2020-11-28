@@ -10,7 +10,7 @@ from django.core.exceptions import PermissionDenied, FieldError
 from signal_server.api.v1.models import Message, Device, PreKey, SignedPreKey
 from signal_server.api.v1.serializers import MessageSerializer, DeviceSerializer, PreKeyBundleSerializer, PreKeySerializer, SignedPreKeySerializer
 from signal_server.api.v1 import errors
-from signal_server.api.v1.custom_djoser.authentication import TokenAuthenticationWithSignature
+from rest_framework.authentication import TokenAuthentication
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -20,7 +20,7 @@ from rest_framework import status
 
 class MessageList(APIView):
 
-    authentication_classes = (TokenAuthenticationWithSignature, )
+    authentication_classes = (TokenAuthentication, )
 
     # User can get a list of messages for their device
     def get(self, request, **kwargs):
@@ -172,7 +172,7 @@ class DeviceView(APIView):
 
 class PreKeyBundleView(APIView):
     throttle_scope = 'preKeyBundle'
-    authentication_classes = (TokenAuthenticationWithSignature, )
+    authentication_classes = (TokenAuthentication, )
     # User can optain a preKeyBundle from another user
     def get(self, request, **kwargs):
 
@@ -223,7 +223,7 @@ class PreKeyBundleView(APIView):
 
 class UserPreKeys(APIView):
 
-    authentication_classes = (TokenAuthenticationWithSignature, )
+    authentication_classes = (TokenAuthentication, )
 
     # User can post a new set of preKeys
     def post(self, request, **kwargs):
@@ -266,7 +266,7 @@ class UserPreKeys(APIView):
 
 class UserSignedPreKeys(APIView):
 
-    authentication_classes = (TokenAuthenticationWithSignature, )
+    authentication_classes = (TokenAuthentication, )
 
     # User can post a new signedPreKey
     def post(self, request, **kwargs):

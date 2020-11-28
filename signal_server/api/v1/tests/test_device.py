@@ -20,7 +20,6 @@ class DeviceTestCase(TestCase):
         response = self.client.post('/v1/devices/', {
             'address': 'test.1',
             'identityKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            'signingKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             'registrationId': 1234,
             'preKeys': [
                 {
@@ -38,7 +37,6 @@ class DeviceTestCase(TestCase):
         self.assertEqual(hasattr(self.user, 'device'), True)
         self.assertEqual(self.user.device.address, 'test.1')
         self.assertEqual(self.user.device.identityKey, 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
-        self.assertEqual(self.user.device.signingKey, 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
         self.assertEqual(self.user.device.registrationId, 1234)
         self.assertEqual(self.user.device.prekey_set.first().keyId, 1)
         self.assertEqual(self.user.device.prekey_set.first().publicKey, 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
@@ -53,7 +51,6 @@ class DeviceTestCase(TestCase):
         response = self.client.post('/v1/devices/', {
             'address': 'test.1',
             'identityKey': 'abcd',
-            'signingKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             'registrationId': 1234,
             'preKeys': [
                 {
@@ -77,7 +74,6 @@ class DeviceTestCase(TestCase):
         response = self.client.post('/v1/devices/', {
             'address': 'test.1',
             'identityKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            'signingKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             'registrationId': 1235,
             'preKeys': [
                 {
@@ -94,7 +90,6 @@ class DeviceTestCase(TestCase):
         response = self.client.post('/v1/devices/', {
             'address': 'test.2',
             'identityKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            'signingKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             'registrationId': 1235,
             'preKeys': [
                 {
@@ -119,7 +114,6 @@ class DeviceTestCase(TestCase):
         response = self.client.post('/v1/devices/', {
             'address': 'test.1',
             'identityKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            'signingKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             'registrationId': 1234,
             'preKeys': [
                 {

@@ -20,7 +20,6 @@ class MessageTestCase(TestCase):
             user=self.user1,
             address='test1.1',
             identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signingKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             registrationId=1234
         )
         PreKey.objects.create(
@@ -40,7 +39,6 @@ class MessageTestCase(TestCase):
             user=self.user2,
             address='test2.1',
             identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            signingKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             registrationId=5678
         )
         PreKey.objects.create(
