@@ -2,8 +2,6 @@
 Defines Django URLs
 """
 
-from django.contrib import admin
-from django.urls import path
 from django.conf.urls import url, include
 from django.contrib.auth import views as auth_views
 
@@ -22,8 +20,5 @@ v1_urlpatterns = [
     url(r'^auth/', include('djoser.urls')),
     url(r'^auth/', include('trench.urls.djoser')),  # for Token Based Authorization
     url(r'^auth/password/reset/confirm(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', auth_views.PasswordResetConfirmView.as_view()),
-    url(r'^auth/password/reset/done/$', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-
-    # Admin URLs
-    path('admin/', admin.site.urls),
+    url(r'^auth/password/reset/done/$', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete')
 ]

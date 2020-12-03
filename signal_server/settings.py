@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -57,14 +56,14 @@ MIDDLEWARE = [
 ]
 
 # Common middleware settings
-APPEND_SLASH = True
+APPEND_SLASH = False
 
-# Security middleware settings
-SECURE_BROWSER_XSS_FILTER = True
+# Security middleware settings - EXTREMELY INSECURE
+SECURE_BROWSER_XSS_FILTER = False
 SECURE_HSTS_SECONDS = 3600
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_SSL_REDIRECT = True
-X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = False
+SECURE_SSL_REDIRECT = False
+X_FRAME_OPTIONS = 'ALLOW'
 
 ROOT_URLCONF = 'signal_server.urls'
 
@@ -92,12 +91,12 @@ WSGI_APPLICATION = 'signal_server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DATABASE_NAME', 'signal_server'),
         'USER': os.environ.get('DATABASE_USER', 'root'),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'sadkjghlwh498jksdghlk4wtywaeuht98434'),
         'HOST': os.environ.get('DATABASE_HOST', 'db'),
-        'PORT': os.environ.get('DATABASE_PORT', 3306),
+        'PORT': os.environ.get('DATABASE_PORT', 3306)
     }
 }
 
@@ -140,7 +139,24 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
+# Moving static assets to DigitalOcean Spaces as per:
+# https://www.digitalocean.com/community/tutorials/how-to-set-up-object-storage-with-django
+AWS_ACCESS_KEY_ID = os.getenv('STATIC_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('STATIC_SECRET_KEY')
+
+AWS_STORAGE_BUCKET_NAME = os.getenv('STATIC_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = os.getenv('STATIC_ENDPOINT_URL')
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+AWS_LOCATION = 'static'
+AWS_DEFAULT_ACL = 'public-read'
+AWS_QUERYSTRING_AUTH = False
+
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+STATIC_URL = '{}/{}/'.format(AWS_S3_ENDPOINT_URL, AWS_LOCATION)
+STATIC_ROOT = 'static/'
 
 # Rest framework
 # http://www.django-rest-framework.org/api-guide/settings/

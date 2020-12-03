@@ -16,9 +16,16 @@ Including another URLconf
 
 
 from django.conf.urls import url, include
+from django.urls import path
+from django.contrib import admin
 from signal_server.api.v1.urls import v1_urlpatterns
+from . import views
 
 
 urlpatterns = [
     url(r'^v1/', include((v1_urlpatterns, 'v1'), namespace='v1')),
+    # Admin URLs
+    path('admin/', admin.site.urls),
+    # Required for health check
+    url('', views.index)
 ]

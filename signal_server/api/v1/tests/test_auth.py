@@ -29,8 +29,8 @@ class AuthTestCase(TestCase):
         self.UserModel = get_user_model()
         self.client = APIClient()
         self.client.credentials()
-        self.user = self.UserModel.objects.create_user(email='testuser@test.com', password=12345)
-        self.user2 = self.UserModel.objects.create_user(email='testuser2@test.com', password=12345)
+        self.user = self.UserModel.objects.create_user(email='testuser@test.com', password="12345")
+        self.user2 = self.UserModel.objects.create_user(email='testuser2@test.com', password="12345")
         MFAMethod = apps.get_model('trench.MFAMethod')
         MFAMethod.objects.create(
             user=self.user2,
@@ -39,7 +39,7 @@ class AuthTestCase(TestCase):
             name='email',
             is_active=True,
         )
-        self.user3 = self.UserModel.objects.create_user(email='testuser3@test.com', password=12345)
+        self.user3 = self.UserModel.objects.create_user(email='testuser3@test.com', password="12345")
         self.device3 = Device.objects.create(
             user=self.user3,
             address='test3.1',
@@ -98,10 +98,10 @@ class AuthTestCase(TestCase):
         # Login
         response = self.client.post('/v1/auth/login/', {
             "email": 'testuser@test.com',
-            "password": 12345})
+            "password": "12345"})
         self.client.credentials(HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
         # Activate a method
-        response = self.client.post("/v1/auth/email/activate/", {})
+        response = self.client.post('/v1/auth/email/activate/', {})
         self.assertEqual(response.status_code, 200)
         # Create a code
         MFAMethod = apps.get_model('trench.MFAMethod')
@@ -117,7 +117,7 @@ class AuthTestCase(TestCase):
         # Get ephemeral token
         response = self.client.post('/v1/auth/login/', {
             "email": 'testuser2@test.com',
-            "password": 12345})
+            "password": "12345"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual("ephemeral_token" in response.data, True)
         # Create a code
@@ -141,7 +141,7 @@ class AuthTestCase(TestCase):
         # Get ephemeral token
         response = self.client.post('/v1/auth/login/', {
             "email": 'testuser2@test.com',
-            "password": 12345})
+            "password": "12345"})
         # Create a code
         MFAMethod = apps.get_model('trench.MFAMethod')
         MFA = MFAMethod.objects.get(user=self.user2, name='email')
@@ -161,7 +161,7 @@ class AuthTestCase(TestCase):
         """User can delete their record"""
         response = self.client.post('/v1/auth/login/', {
             "email": 'testuser@test.com',
-            "password": 12345})
+            "password": "12345"})
         self.client.credentials(HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
         response = self.client.delete('/v1/auth/users/me/', {
             "currentPassword": 12345})
@@ -171,12 +171,12 @@ class AuthTestCase(TestCase):
         """The usual djoser token login fails (cannot avoid 2fa)"""
         response = self.client.post('/v1/auth/token/login/', {
             "email": 'testuser@test.com',
-            "password": 12345})
+            "password": "12345"})
         self.assertEqual(response.status_code, 404)
 
     def test_djoser_jwt_login_fail(self):
         """The usual djoser jwt login fails (cannot avoid 2fa)"""
         response = self.client.post('/v1/auth/jwt/create/', {
             "email": 'testuser@test.com',
-            "password": 12345})
+            "password": "12345"})
         self.assertEqual(response.status_code, 404)

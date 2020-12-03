@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simplesignal-app
+  labels:
+    app: simplesignal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: simplesignal
+  template:
+    metadata:
+      labels:
+        app: simplesignal
+    spec:
+      containers:
+        - image: matthewthomasroche/simplesignal:latest
+          imagePullPolicy: Always
+          name: simplesignal
+          envFrom:
+          - secretRef:
+              name: simplesignal-secret
+          - configMapRef:
+              name: simplesignal-config
+          ports:
+            - containerPort: 8000
+              name: gunicorn

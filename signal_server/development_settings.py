@@ -16,6 +16,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = "*"
 
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
