@@ -133,6 +133,8 @@ class MessageList(APIView):
 
 class DeviceView(APIView):
 
+    authentication_classes = (TokenAuthentication, )
+
     # User can register details of a new device
     def post(self, request, **kwargs):
 

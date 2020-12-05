@@ -2,22 +2,11 @@
 Tests for the auth view
 """
 
-import json
-import base64
-import datetime
-import hashlib
-import binascii
-
-from urllib.parse import quote
-
-from ecdsa import SigningKey, NIST521p
-from ecdsa.util import sigencode_string
-
 from django.test import TestCase
 from django.apps import apps
 from django.contrib.auth import get_user_model
 
-from signal_server.api.v1.views import Device, PreKey, SignedPreKey
+from signal_server.api.v1.models import Device, PreKey, SignedPreKey
 
 from rest_framework.test import APIClient
 from trench.utils import create_otp_code, create_secret
@@ -169,14 +158,23 @@ class AuthTestCase(TestCase):
 
     def test_djoser_token_login_fail(self):
         """The usual djoser token login fails (cannot avoid 2fa)"""
-        response = self.client.post('/v1/auth/token/login/', {
-            "email": 'testuser@test.com',
+        MFAMethod = apps.get_model('trench.MFAMethod')
+        MFAMethod.objects.create(
+            user=self.user2,
+            secret=create_secret(),
+            is_primary=True,
+            name='email',
+            is_active=True,
+        )
+        response = self.client.post('/v1/auth/login/', {
+            "email": 'testuser2@test.com',
             "password": "12345"})
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual("ephemeral_token" in response.data, True)
+        self.assertEqual("auth_token" in response.data, False)
 
     def test_djoser_jwt_login_fail(self):
         """The usual djoser jwt login fails (cannot avoid 2fa)"""
         response = self.client.post('/v1/auth/jwt/create/', {
             "email": 'testuser@test.com',
             "password": "12345"})
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual("data" in response, False)

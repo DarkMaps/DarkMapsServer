@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 
 from rest_framework.test import APIClient
 
-from signal_server.api.v1.views import Device, PreKey, SignedPreKey, Message
+from signal_server.api.v1.models import Device, PreKey, SignedPreKey, Message
 
 class MessageTestCase(TestCase):
     def setUp(self):

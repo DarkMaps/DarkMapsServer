@@ -11,3 +11,8 @@ Updating:
 2) docker tag simplesignal:latest matthewthomasroche/simplesignal:latest
 3) docker push matthewthomasroche/simplesignal:latest
 4) Restart containers
+
+Updating secrets / ConfigMap
+- kubectl apply -f simplesignal-configmap.yaml
+- kubectl delete secret simplesignal-secret
+- kubectl create secret generic simplesignal-secret --from-env-file=simplesignal-secrets
