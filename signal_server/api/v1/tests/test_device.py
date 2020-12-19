@@ -19,29 +19,29 @@ class DeviceTestCase(TestCase):
         """A device can be created in the correct format"""
         response = self.client.post('/v1/devices/', {
             'address': 'test.1',
-            'identityKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            'registrationId': 1234,
-            'preKeys': [
+            'identity_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            'registration_id': 1234,
+            'pre_keys': [
                 {
-                    'keyId': 1,
-                    'publicKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+                    'key_id': 1,
+                    'public_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
                 }
             ],
-            'signedPreKey': {
-                'keyId': 1,
-                'publicKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            'signed_pre_key': {
+                'key_id': 1,
+                'public_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
                 'signature': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
             }
         }, format='json')
         self.user.refresh_from_db()
         self.assertEqual(hasattr(self.user, 'device'), True)
         self.assertEqual(self.user.device.address, 'test.1')
-        self.assertEqual(self.user.device.identityKey, 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
-        self.assertEqual(self.user.device.registrationId, 1234)
-        self.assertEqual(self.user.device.prekey_set.first().keyId, 1)
-        self.assertEqual(self.user.device.prekey_set.first().publicKey, 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
-        self.assertEqual(self.user.device.signedprekey.keyId, 1)
-        self.assertEqual(self.user.device.signedprekey.publicKey, 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+        self.assertEqual(self.user.device.identity_key, 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+        self.assertEqual(self.user.device.registration_id, 1234)
+        self.assertEqual(self.user.device.prekey_set.first().key_id, 1)
+        self.assertEqual(self.user.device.prekey_set.first().public_key, 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+        self.assertEqual(self.user.device.signedprekey.key_id, 1)
+        self.assertEqual(self.user.device.signedprekey.public_key, 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
         self.assertEqual(self.user.device.signedprekey.signature, 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['code'], 'device_created')
@@ -50,17 +50,17 @@ class DeviceTestCase(TestCase):
         """A device cannot be created in the incorrect format"""
         response = self.client.post('/v1/devices/', {
             'address': 'test.1',
-            'identityKey': 'abcd',
-            'registrationId': 1234,
-            'preKeys': [
+            'identity_key': 'abcd',
+            'registration_id': 1234,
+            'pre_keys': [
                 {
-                    'keyId': 1,
-                    'publicKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+                    'key_id': 1,
+                    'public_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
                 }
             ],
-            'signedPreKey': {
-                'keyId': 1,
-                'publicKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            'signed_pre_key': {
+                'key_id': 1,
+                'public_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
                 'signature': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
             }
         }, format='json')
@@ -73,33 +73,33 @@ class DeviceTestCase(TestCase):
         """Creating a second device will be rejected"""
         response = self.client.post('/v1/devices/', {
             'address': 'test.1',
-            'identityKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            'registrationId': 1235,
-            'preKeys': [
+            'identity_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            'registration_id': 1235,
+            'pre_keys': [
                 {
-                    'keyId': 1,
-                    'publicKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+                    'key_id': 1,
+                    'public_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
                 }
             ],
-            'signedPreKey': {
-                'keyId': 1,
-                'publicKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            'signed_pre_key': {
+                'key_id': 1,
+                'public_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
                 'signature': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
             }
         }, format='json')
         response = self.client.post('/v1/devices/', {
             'address': 'test.2',
-            'identityKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            'registrationId': 1235,
-            'preKeys': [
+            'identity_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            'registration_id': 1235,
+            'pre_keys': [
                 {
-                    'keyId': 1,
-                    'publicKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+                    'key_id': 1,
+                    'public_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
                 }
             ],
-            'signedPreKey': {
-                'keyId': 1,
-                'publicKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            'signed_pre_key': {
+                'key_id': 1,
+                'public_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
                 'signature': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
             }
         }, format='json')
@@ -113,17 +113,17 @@ class DeviceTestCase(TestCase):
         """A device can be deleted"""
         response = self.client.post('/v1/devices/', {
             'address': 'test.1',
-            'identityKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            'registrationId': 1234,
-            'preKeys': [
+            'identity_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            'registration_id': 1234,
+            'pre_keys': [
                 {
-                    'keyId': 1,
-                    'publicKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+                    'key_id': 1,
+                    'public_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
                 }
             ],
-            'signedPreKey': {
-                'keyId': 1,
-                'publicKey': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            'signed_pre_key': {
+                'key_id': 1,
+                'public_key': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
                 'signature': 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
             }
         }, format='json')

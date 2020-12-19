@@ -47,7 +47,7 @@ reached_max_prekeys = Response({
 
 prekey_id_exists = Response({
     "code": "prekey_id_exists",
-    "message": "A prekey with that keyId already exists"
+    "message": "A prekey with that key_id already exists"
 }, status=status.HTTP_400_BAD_REQUEST)
 
 invalid_recipient_email = Response({

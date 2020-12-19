@@ -170,7 +170,7 @@ Using this container safely in production may require the following environment 
 
 ## API Documentation
 
-**Note: Where the device registrationId is sent to the server it is the sending user's registration ID that is included, not the recipient.**
+**Note: Where the device registration_id is sent to the server it is the sending user's registration ID that is included, not the recipient.**
 
 ### Authentication
 
@@ -382,18 +382,18 @@ Requires token authentication
 Body:
 {
 	address: <String - The device address>,
-	identityKey: <String - The identity key, length 32 characters>,
-	registrationId: <Integer - The device registration ID>,
-	signingKey: <String - Thie device signing key, length 32 characters>
-	preKeys: [
+	identity_key: <String - The identity key, length 32 characters>,
+	registration_id: <Integer - The device registration ID>,
+	signingKey: <String - The device signing key, length 32 characters>
+	pre_keys: [
 		{
-			keyId: <Integer>,
-			publicKey: <String - Length 32 characters>
+			key_id: <Integer>,
+			public_key: <String - Length 32 characters>
 		}
 	],
-	signedPreKey: {
-		keyId: <Integer>,
-		publicKey: <String - Length 32 characters>,
+	signed_pre_key: {
+		key_id: <Integer>,
+		public_key: <String - Length 32 characters>,
 		signature: <String - Length 64 characters>
 	}
 }
@@ -473,7 +473,7 @@ Body:
 
 JSON Message String:
 {
-	registrationID: <Integer - The recipient's registration ID>,
+	registration_id: <Integer - The recipient's registration ID>,
 	content: <Sring - The actual message content>
 }
 
@@ -481,9 +481,9 @@ Success <HTTP 201>:
 	{
 		id: <Integer>,
 		content: <String>,
-		senderAddress: <String>
-		senderRegistrationId: <Integer>
-		recipientAddress: <String>
+		sender_address: <String>
+		sender_registration_id: <Integer>
+		recipient_address: <String>
 	}
 
 Errors:
@@ -547,8 +547,8 @@ Success <HTTP 200>:
 			id: <Integer>,
 			created: <Date>,
 			content: <String>,
-			senderRegistrationId: <Integer>,
-			senderAddress: <String>
+			sender_registration_id: <Integer>,
+			sender_address: <String>
 		},
 		...
 	]
@@ -586,7 +586,7 @@ Deletes a message owned by the signed in user. Requires token authentication and
 
 Body:
 [
-	<messageId>,
+	<message_id>,
 	...
 ]
 
@@ -640,10 +640,10 @@ NB: <recipient email> must be Hex encoded.
 Success <HTTP 200>:
 	{
 		address: <String>,
-		identityKey: <String>,
-		registrationId: <Integer>,
-		preKey: <String>,
-		signedPreKey: <String>
+		identity_key: <String>,
+		registration_id: <Integer>,
+		pre_key: <String>,
+		signed_pre_key: <String>
 	}
 
 Errors:
@@ -685,8 +685,8 @@ Send a list of new prekeys to the server. Requires token authentication and requ
 Body:
   [
     {
-      keyId: <Integer>,
-      publicKey: <String>
+      key_id: <Integer>,
+      public_key: <String>
     },
     ...
   ]
@@ -728,7 +728,7 @@ Errors:
   	<HTTP 400>
   	{
       code: 'prekey_id_exists',
-      message: 'A prekey with that keyId already exists'
+      message: 'A prekey with that key_id already exists'
   	}
 ```
 
@@ -742,8 +742,8 @@ Send a new signed prekey to the server. Requires token authentication and reques
 
 Body:
   {
-    keyId: <Integer>,
-    publicKey: <String>,
+    key_id: <Integer>,
+    public_key: <String>,
     signature: <String>
   }
 

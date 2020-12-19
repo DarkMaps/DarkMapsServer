@@ -19,18 +19,18 @@ class PrekeysTestCase(TestCase):
         self.device = Device.objects.create(
             user=self.user,
             address='test.1',
-            identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            registrationId=1234
+            identity_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            registration_id=1234
         )
         PreKey.objects.create(
             device=self.device,
-            keyId=1,
-            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            key_id=1,
+            public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         SignedPreKey.objects.create(
             device=self.device,
-            keyId=1,
-            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            key_id=1,
+            public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
 
@@ -38,14 +38,14 @@ class PrekeysTestCase(TestCase):
         """Prekeys on a device can be updated"""
         response = self.client.post('/v1/1234/prekeys/', [
             {
-                "keyId": 2,
-                "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+                "key_id": 2,
+                "public_key": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
             }
         ], format='json')
         self.user.refresh_from_db()
         self.assertEqual(self.user.device.prekey_set.count(), 2)
-        self.assertEqual(self.user.device.prekey_set.all()[1].keyId, 2)
-        self.assertEqual(self.user.device.prekey_set.all()[1].publicKey, "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd")
+        self.assertEqual(self.user.device.prekey_set.all()[1].key_id, 2)
+        self.assertEqual(self.user.device.prekey_set.all()[1].public_key, "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['code'], 'prekeys_stored')
 
@@ -53,8 +53,8 @@ class PrekeysTestCase(TestCase):
         """Prekeys with a duplicate keyID cannot be created"""
         response = self.client.post('/v1/1234/prekeys/', [
             {
-                "keyId": 1,
-                "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+                "key_id": 1,
+                "public_key": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
             }
         ], format='json')
         self.user.refresh_from_db()
@@ -66,8 +66,8 @@ class PrekeysTestCase(TestCase):
         """Prekeys with incorrect format cannot be created"""
         response = self.client.post('/v1/1234/prekeys/', [
             {
-                "keyId": 3,
-                "publicKey": "abcd"
+                "key_id": 3,
+                "public_key": "abcd"
             }
         ], format='json')
         self.user.refresh_from_db()
@@ -79,8 +79,8 @@ class PrekeysTestCase(TestCase):
         """Prekeys for an incorrect identity cannot be updated"""
         response = self.client.post('/v1/1235/prekeys/', [
             {
-                "keyId": 3,
-                "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
+                "key_id": 3,
+                "public_key": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
             }
         ], format='json')
         self.user.refresh_from_db()
@@ -93,8 +93,8 @@ class PrekeysTestCase(TestCase):
         self.client.force_authenticate(user=self.user2)
         response = self.client.post('/v1/1234/prekeys/', [
             {
-                "keyId": 2,
-                "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
+                "key_id": 2,
+                "public_key": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
             }
         ], format='json')
         self.assertEqual(response.status_code, 404)

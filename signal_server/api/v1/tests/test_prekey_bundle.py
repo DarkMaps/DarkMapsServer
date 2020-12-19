@@ -18,13 +18,13 @@ class PrekeysTestCase(TestCase):
         self.device1 = Device.objects.create(
             user=self.user1,
             address='test1.1',
-            identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            registrationId=1234
+            identity_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            registration_id=1234
         )
         SignedPreKey.objects.create(
             device=self.device1,
-            keyId=1,
-            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            key_id=1,
+            public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         # Set up user 2
@@ -32,18 +32,18 @@ class PrekeysTestCase(TestCase):
         self.device2 = Device.objects.create(
             user=self.user2,
             address='test2.1',
-            identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            registrationId=5678
+            identity_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            registration_id=5678
         )
         PreKey.objects.create(
             device=self.device2,
-            keyId=1,
-            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            key_id=1,
+            public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         SignedPreKey.objects.create(
             device=self.device2,
-            keyId=1,
-            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            key_id=1,
+            public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         # Set up user 3
@@ -56,18 +56,18 @@ class PrekeysTestCase(TestCase):
         self.assertEqual(self.user2.device.prekey_set.count(), 0)
         self.assertEqual(response.status_code, 200)
         self.assertEqual('address' in response.data, True)
-        self.assertEqual('identityKey' in response.data, True)
-        self.assertEqual('registrationId' in response.data, True)
-        self.assertEqual('preKey' in response.data, True)
-        self.assertEqual('signedPreKey' in response.data, True)
+        self.assertEqual('identity_key' in response.data, True)
+        self.assertEqual('registration_id' in response.data, True)
+        self.assertEqual('pre_key' in response.data, True)
+        self.assertEqual('signed_pre_key' in response.data, True)
         self.assertEqual(response.data['address'], 'test2.1')
-        self.assertEqual(response.data['identityKey'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
-        self.assertEqual(response.data['registrationId'], 5678)
-        self.assertEqual(response.data['preKey']['keyId'], 1)
-        self.assertEqual(response.data['preKey']['publicKey'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
-        self.assertEqual(response.data['signedPreKey']['keyId'], 1)
-        self.assertEqual(response.data['signedPreKey']['publicKey'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
-        self.assertEqual(response.data['signedPreKey']['signature'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+        self.assertEqual(response.data['identity_key'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+        self.assertEqual(response.data['registration_id'], 5678)
+        self.assertEqual(response.data['pre_key']['key_id'], 1)
+        self.assertEqual(response.data['pre_key']['public_key'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+        self.assertEqual(response.data['signed_pre_key']['key_id'], 1)
+        self.assertEqual(response.data['signed_pre_key']['public_key'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+        self.assertEqual(response.data['signed_pre_key']['signature'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
 
     def test_get_prekey_bundle_no_prekeys(self):
         """When no prekeys are available a correctly formatted prekey undle can still be obtained"""
@@ -75,16 +75,16 @@ class PrekeysTestCase(TestCase):
         response = self.client.get('/v1/prekeybundles/74657374312e31/5678/', format='json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual('address' in response.data, True)
-        self.assertEqual('identityKey' in response.data, True)
-        self.assertEqual('registrationId' in response.data, True)
-        self.assertEqual('preKey' in response.data, False)
-        self.assertEqual('signedPreKey' in response.data, True)
+        self.assertEqual('identity_key' in response.data, True)
+        self.assertEqual('registration_id' in response.data, True)
+        self.assertEqual('pre_key' in response.data, False)
+        self.assertEqual('signed_pre_key' in response.data, True)
         self.assertEqual(response.data['address'], 'test1.1')
-        self.assertEqual(response.data['identityKey'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
-        self.assertEqual(response.data['registrationId'], 1234)
-        self.assertEqual(response.data['signedPreKey']['keyId'], 1)
-        self.assertEqual(response.data['signedPreKey']['publicKey'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
-        self.assertEqual(response.data['signedPreKey']['signature'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+        self.assertEqual(response.data['identity_key'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+        self.assertEqual(response.data['registration_id'], 1234)
+        self.assertEqual(response.data['signed_pre_key']['key_id'], 1)
+        self.assertEqual(response.data['signed_pre_key']['public_key'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+        self.assertEqual(response.data['signed_pre_key']['signature'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
 
     def test_get_prekey_bundle_address_not_hex(self):
         """An error is returned if the address is not provided in hex format"""

@@ -175,7 +175,7 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': '3/hour',
         'user': '1000/day',
-        'preKeyBundle': '3/day'
+        'pre_keyBundle': '3/day'
     },
     # Versioning
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',

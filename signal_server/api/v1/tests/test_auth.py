@@ -32,18 +32,18 @@ class AuthTestCase(TestCase):
         self.device3 = Device.objects.create(
             user=self.user3,
             address='test3.1',
-            identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            registrationId=1234
+            identity_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            registration_id=1234
         )
         PreKey.objects.create(
             device=self.device3,
-            keyId=1,
-            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            key_id=1,
+            public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         SignedPreKey.objects.create(
             device=self.device3,
-            keyId=1,
-            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            key_id=1,
+            public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
 

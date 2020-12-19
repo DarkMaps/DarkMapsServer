@@ -19,18 +19,18 @@ class MessageTestCase(TestCase):
         self.device1 = Device.objects.create(
             user=self.user1,
             address='test1.1',
-            identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            registrationId=1234
+            identity_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            registration_id=1234
         )
         PreKey.objects.create(
             device=self.device1,
-            keyId=1,
-            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            key_id=1,
+            public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         SignedPreKey.objects.create(
             device=self.device1,
-            keyId=1,
-            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            key_id=1,
+            public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         # Set up user 2
@@ -38,40 +38,40 @@ class MessageTestCase(TestCase):
         self.device2 = Device.objects.create(
             user=self.user2,
             address='test2.1',
-            identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            registrationId=5678
+            identity_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            registration_id=5678
         )
         PreKey.objects.create(
             device=self.device2,
-            keyId=1,
-            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            key_id=1,
+            public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         SignedPreKey.objects.create(
             device=self.device2,
-            keyId=1,
-            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            key_id=1,
+            public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         # Create test message from user 2 to user 1
         Message.objects.create(
             recipient=self.device1,
-            content='{"registrationId": 1234, "content": "test"}',
-            senderRegistrationId=5678,
-            senderAddress='test2.1'
+            content='{"registration_id": 1234, "content": "test"}',
+            sender_registration_id=5678,
+            sender_address='test2.1'
         )
 
     def test_send_message(self):
         """Correctly formatted messages can be sent"""
         response = self.client.post('/v1/1234/messages/', {
             "recipient": "testuser2@test.com",
-            "message": '{"registrationId": 5678, "content": "test"}'
+            "message": '{"registration_id": 5678, "content": "test"}'
         }, format='json')
         self.user1.refresh_from_db()
         self.assertEqual(hasattr(self.user2.device, 'received_messages'), True)
         self.assertEqual(self.user2.device.received_messages.count(), 1)
-        self.assertEqual(self.user2.device.received_messages.first().content, '{"registrationId": 5678, "content": "test"}')
-        self.assertEqual(self.user2.device.received_messages.first().senderRegistrationId, 1234)
-        self.assertEqual(self.user2.device.received_messages.first().senderAddress, 'test1.1')
+        self.assertEqual(self.user2.device.received_messages.first().content, '{"registration_id": 5678, "content": "test"}')
+        self.assertEqual(self.user2.device.received_messages.first().sender_registration_id, 1234)
+        self.assertEqual(self.user2.device.received_messages.first().sender_address, 'test1.1')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['id'], 2)
 
@@ -95,7 +95,7 @@ class MessageTestCase(TestCase):
         """Messages with a non-existent recipient email are rejected"""
         response = self.client.post('/v1/1234/messages/', {
             "recipient": "testuser3@test.com",
-            "message": '{"registrationId": 5678, "content": "test"}'
+            "message": '{"registration_id": 5678, "content": "test"}'
         }, format='json')
         self.user1.refresh_from_db()
         self.user2.refresh_from_db()
@@ -108,7 +108,7 @@ class MessageTestCase(TestCase):
         """Messages with an incorrectly formatted recipient email are rejected"""
         response = self.client.post('/v1/1234/messages/', {
             "recipient": "test",
-            "message": '{"registrationId": 5678, "content": "test"}'
+            "message": '{"registration_id": 5678, "content": "test"}'
         }, format='json')
         self.user1.refresh_from_db()
         self.user2.refresh_from_db()
@@ -133,7 +133,7 @@ class MessageTestCase(TestCase):
         """Messages sent from an altered identity are rejected"""
         response = self.client.post('/v1/1235/messages/', {
             "recipient": "testuser2@test.com",
-            "message": '{"registrationId": 5678, "content": "test"}'
+            "message": '{"registration_id": 5678, "content": "test"}'
         }, format='json')
         self.user2.refresh_from_db()
         self.assertEqual(self.user2.device.received_messages.count(), 0)

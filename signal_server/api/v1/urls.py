@@ -10,10 +10,10 @@ from signal_server.api.v1 import views as v1_views
 v1_urlpatterns = [
     # API URLs
     url(r'^devices/', v1_views.DeviceView.as_view()),
-    url(r'^(?P<requestedDeviceRegistrationID>[0-9]+)/prekeys/$', v1_views.UserPreKeys.as_view()),
-    url(r'^(?P<requestedDeviceRegistrationID>[0-9]+)/signedprekeys/$', v1_views.UserSignedPreKeys.as_view()),
-    url(r'^(?P<requestedDeviceRegistrationID>[0-9]+)/messages/$', v1_views.MessageList.as_view()),
-    url(r'^prekeybundles/(?P<recipientAddress>[0-9A-Za-z./=+]+)/(?P<ownDeviceRegistrationID>[0-9]+)/$', v1_views.PreKeyBundleView.as_view()),
+    url(r'^(?P<requestedDeviceregistration_id>[0-9]+)/prekeys/$', v1_views.UserPreKeys.as_view()),
+    url(r'^(?P<requestedDeviceregistration_id>[0-9]+)/signedprekeys/$', v1_views.UserSignedPreKeys.as_view()),
+    url(r'^(?P<requestedDeviceregistration_id>[0-9]+)/messages/$', v1_views.MessageList.as_view()),
+    url(r'^prekeybundles/(?P<recipient_address>[0-9A-Za-z./=+]+)/(?P<ownDeviceregistration_id>[0-9]+)/$', v1_views.PreKeyBundleView.as_view()),
 
     # Auth URLs
     url(r'^auth/', include('trench.urls')), # Base endpoints

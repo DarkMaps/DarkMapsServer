@@ -19,31 +19,31 @@ class SignedPrekeysTestCase(TestCase):
         device = Device.objects.create(
             user=self.user,
             address='test.1',
-            identityKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
-            registrationId=1234
+            identity_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            registration_id=1234
         )
         PreKey.objects.create(
             device=device,
-            keyId=1,
-            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+            key_id=1,
+            public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
         SignedPreKey.objects.create(
             device=device,
-            keyId=1,
-            publicKey='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
+            key_id=1,
+            public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
 
     def test_update_signedprekeys(self):
         """Signed prekeys on a device can be updated"""
         response = self.client.post('/v1/1234/signedprekeys/', {
-            "keyId": 2,
-            "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
+            "key_id": 2,
+            "public_key": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
             "signature": 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         }, format='json')
         self.user.refresh_from_db()
-        self.assertEqual(self.user.device.signedprekey.keyId, 2)
-        self.assertEqual(self.user.device.signedprekey.publicKey, 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+        self.assertEqual(self.user.device.signedprekey.key_id, 2)
+        self.assertEqual(self.user.device.signedprekey.public_key, 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
         self.assertEqual(self.user.device.signedprekey.signature, 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['code'], 'signed_prekey_stored')
@@ -51,24 +51,24 @@ class SignedPrekeysTestCase(TestCase):
     def test_incorrect_signedprekeys(self):
         """Signed prekeys with incorrect format cannot be created"""
         response = self.client.post('/v1/1234/signedprekeys/', {
-            "keyId": 3,
-            "publicKey": "abcd",
+            "key_id": 3,
+            "public_key": "abcd",
             "signature": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
         }, format='json')
         self.user.refresh_from_db()
-        self.assertEqual(self.user.device.signedprekey.keyId, 1)
+        self.assertEqual(self.user.device.signedprekey.key_id, 1)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['code'], 'incorrect_arguments')
 
     def test_signedprekeys_changed_registration_id(self):
         """Signed prekeys for an incorrect identity cannot be updated"""
         response = self.client.post('/v1/1235/signedprekeys/', {
-            "keyId": 2,
-            "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
+            "key_id": 2,
+            "public_key": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
             "signature": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
         }, format='json')
         self.user.refresh_from_db()
-        self.assertEqual(self.user.device.signedprekey.keyId, 1)
+        self.assertEqual(self.user.device.signedprekey.key_id, 1)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['code'], 'device_changed')
 
@@ -76,8 +76,8 @@ class SignedPrekeysTestCase(TestCase):
         """Signed prekeys provided for a user with no device should fail"""
         self.client.force_authenticate(user=self.user2)
         response = self.client.post('/v1/1235/signedprekeys/', {
-            "keyId": 2,
-            "publicKey": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
+            "key_id": 2,
+            "public_key": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
             "signature": "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
         }, format='json')
         self.assertEqual(response.status_code, 404)
