@@ -10,7 +10,7 @@ This repository contains a simple server providing REST API calls to manage a me
 
 
 
-**DISCLAIMER - This project has no relation to the Signal Foundation or Signal app, although it makes use of the underlying code provided in the [libsignal_protocol_javascript](https://github.com/signalapp/libsignal-protocol-javascript) package. It is intended for testing purposes only, and has not been tested at any point for security**
+**DISCLAIMER - This project has no relation to the Signal Foundation or Signal app. It is intended for testing purposes only, and has not been tested at any point for security**
 
 
 
@@ -33,15 +33,6 @@ This repository contains a simple server providing REST API calls to manage a me
   - [Devices](#devices)
   - [Messages](#messages)
   - [Keys](#keys)
-
-
-
----
-
-
-
-## TODO
-- Remove admin interface
 
 
 
@@ -76,17 +67,6 @@ pip install -r requirements.txt
 Automated tests can be initiated using:
 ```
 ./test.sh
-```
-
----
-
-
-
-## Starting the server using docker swarm
-
-A simple docker compose file is provided for example usage. This creates a simple entwork with a single instance of the container and a mysql database. The API is available on port 8000.
-```
-docker-compose up
 ```
 
 ---
@@ -143,6 +123,8 @@ Using this container safely in production may require the following environment 
 
 ​		You will need to set up external email using SMTP in order to allow your users to rset their passwords. Do so by passing the following environment variables to your container. See the [Django Docs](https://docs.djangoproject.com/en/2.2/topics/email/#email-backends)
 
+
+```
 	- EMAIL_BACKEND
 	- EMAIL_HOST
 	- EMAIL_PORT
@@ -151,6 +133,7 @@ Using this container safely in production may require the following environment 
 	- EMAIL_TIMEOUT
 	- EMAIL_SSL_KEYFILE
 	- EMAIL_SSL_CERTFILE
+```
 
 ​		This is essential in production to allow password reset emails to be sent.
 
@@ -191,7 +174,7 @@ Using this container safely in production may require the following environment 
 
 ### Authentication
 
-Authentication is provided using the Django [Djoser](https://djoser.readthedocs.io/en/latest/base_endpoints.html) and [Django Trench](https://django-trench.readthedocs.io/en/latest/endpoints.html) frameworks. All the documented Djoser **base** endpoints and **all** Django Trench endpoints are available. The most important of these are documented below.
+Authentication is provided using the [Django Djoser](https://djoser.readthedocs.io/en/latest/base_endpoints.html) and [Django Trench](https://django-trench.readthedocs.io/en/latest/endpoints.html) frameworks. All the documented Djoser **base** endpoints and **all** Django Trench endpoints are available. The most important of these are documented below.
 
 **User Sign Up**
 
@@ -751,7 +734,7 @@ Errors:
 
 
 
-**Provide a new signed pre key** 
+**Provide a new signed pre key**
 
 Send a new signed prekey to the server. Requires token authentication and request signing.
 ```

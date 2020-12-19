@@ -153,7 +153,7 @@ class AuthTestCase(TestCase):
             "password": "12345"})
         self.client.credentials(HTTP_AUTHORIZATION="Token "+response.data["auth_token"])
         response = self.client.delete('/v1/auth/users/me/', {
-            "currentPassword": 12345})
+            "current_password": 12345})
         self.assertEqual(response.status_code, 204)
 
     def test_djoser_token_login_fail(self):

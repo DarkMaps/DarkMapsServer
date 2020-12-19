@@ -201,8 +201,7 @@ CORS_ALLOW_HEADERS = (
 
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'auth/password/reset/confirm{uid}/{token}',
-    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
-    'SERIALIZERS': {'user_delete': 'signal_server.api.v1.custom_djoser.serializers.UserDeleteSerializer'}
+    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token'
 }
 
 # Email

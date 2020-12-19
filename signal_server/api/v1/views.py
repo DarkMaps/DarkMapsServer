@@ -72,7 +72,7 @@ class MessageList(APIView):
         if int(kwargs['requestedDeviceRegistrationID']) != ownUser.device.registrationId:
             return errors.device_changed
 
-        # Check repiient user exists
+        # Check repient user exists
         recipientUser = {}
         userModel = get_user_model()
         try:
