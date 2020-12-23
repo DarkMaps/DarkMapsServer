@@ -459,7 +459,7 @@ Errors:
 
 **Send a new message**
 
-Requires token authentication and request signing.
+Requires token authentication.
 
 ```
 /v1/<Sending user's registration ID>/messages/ POST
@@ -535,7 +535,7 @@ Errors:
 
 **Get messages for user**
 
-Gets all outstanding messages for the signed in user. Requires token authentication and request signing.
+Gets all outstanding messages for the signed in user. Requires token authentication.
 
 ```
 /v1/<Receiving user's registration ID>/messages/ GET
@@ -578,7 +578,7 @@ Errors:
 
 **Delete a message**
 
-Deletes a message owned by the signed in user. Requires token authentication and request signing.
+Deletes a message owned by the signed in user. Requires token authentication.
 
 ```
 /v1/<User's own registration ID>/messages/
@@ -629,7 +629,7 @@ Errors:
 
 **Get a prekey bundle**
 
-Allows a user to retrieve a prekey bundle for another user prior to starting communications. Requires token authentication and request signing.
+Allows a user to retrieve a prekey bundle for another user prior to starting communications. Requires token authentication.
 
 ```
 /v1/prekeybundle/<recipient email>/<sender's device registration ID>/ GET
@@ -684,7 +684,7 @@ Errors:
 
 **Provide new prekeys **
 
-Send a list of new prekeys to the server. Requires token authentication and request signing.
+Send a list of new prekeys to the server. Requires token authentication.
 ```
 /v1/<sender's device registration ID>/prekeys/ POST
 
@@ -742,7 +742,7 @@ Errors:
 
 **Provide a new signed pre key**
 
-Send a new signed prekey to the server. Requires token authentication and request signing.
+Send a new signed prekey to the server. Requires token authentication.
 ```
 /v1/<sender's device registration ID>/signedprekeys/ POST
 
