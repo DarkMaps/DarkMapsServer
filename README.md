@@ -382,19 +382,18 @@ Requires token authentication
 Body:
 {
 	address: <String - The device address>,
-	identity_key: <String - The identity key, length 32 characters>,
-	registration_id: <Integer - The device registration ID>,
-	signingKey: <String - The device signing key, length 32 characters>
+	identity_key: <String - The identity key, length 44 characters, base64 encoded>,
+	registration_id: <Integer - The device registration ID>
 	pre_keys: [
 		{
 			key_id: <Integer>,
-			public_key: <String - Length 32 characters>
+			public_key: <String - Length 44 characters, base64 encoded>
 		}
 	],
 	signed_pre_key: {
 		key_id: <Integer>,
-		public_key: <String - Length 32 characters>,
-		signature: <String - Length 64 characters>
+		public_key: <String - Length 44 characters, base64 encoded>,
+		signature: <String - Length 88 characters, base64 encoded>
 	}
 }
 
@@ -463,7 +462,7 @@ Errors:
 Requires token authentication and request signing.
 
 ```
-/v1/<Sending user's device ID>/messages/ POST
+/v1/<Sending user's registration ID>/messages/ POST
 
 Body:
 {
@@ -640,10 +639,17 @@ NB: <recipient email> must be Hex encoded.
 Success <HTTP 200>:
 	{
 		address: <String>,
-		identity_key: <String>,
+		identity_key: <String - The identity key, length 44 characters, base64 encoded>,
 		registration_id: <Integer>,
-		pre_key: <String>,
-		signed_pre_key: <String>
+		pre_key: {
+      key_id: <Integer>,
+      public_key: <String - Length 44 characters, base64 encoded>
+    },
+		signed_pre_key: {
+      key_id: <Integer>,
+      public_key: <String - Length 44 characters, base64 encoded>,
+      signature: <String - Length 88 characters, base64 encoded>
+    }
 	}
 
 Errors:
@@ -686,7 +692,7 @@ Body:
   [
     {
       key_id: <Integer>,
-      public_key: <String>
+      public_key: <String - Length 44 characters, base64 encoded>
     },
     ...
   ]
@@ -743,8 +749,8 @@ Send a new signed prekey to the server. Requires token authentication and reques
 Body:
   {
     key_id: <Integer>,
-    public_key: <String>,
-    signature: <String>
+    public_key: <String - Length 44 characters, base64 encoded>,
+    signature: <String - Length 88 characters, base64 encoded>
   }
 
 Success <HTTP 200>:
