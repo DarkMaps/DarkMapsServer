@@ -6,6 +6,7 @@ import re
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, FieldError
+from django.forms.models import model_to_dict
 
 from signal_server.api.v1.models import Message, Device
 from signal_server.api.v1.serializers import MessageSerializer, DeviceSerializer, PreKeyBundleSerializer, PreKeySerializer, SignedPreKeySerializer
@@ -55,8 +56,9 @@ class MessageList(APIView):
 
         ownUser = self.request.user
         recipientEmail = request.data["recipient"]
+        print(recipientEmail)
         emailPattern = re.compile(r'(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])')
-        if not (emailPattern.match(recipientEmail)):
+        if not (emailPattern.match(recipientEmail.lower())):
             return errors.invalid_recipient_email
 
         try:
@@ -135,6 +137,14 @@ class DeviceView(APIView):
 
     authentication_classes = (TokenAuthentication, )
 
+    def get(self, request, **kwargs):
+        user = self.request.user
+        # Check device exists and owned by user
+        if not hasattr(user, "device"):
+            return errors.no_device
+        device = model_to_dict(user.device)
+        return Response(device, status=status.HTTP_200_OK)
+
     # User can register details of a new device
     def post(self, request, **kwargs):
 
@@ -197,6 +207,7 @@ class PreKeyBundleView(APIView):
         # Decode hex
         try:
             recipient_address = bytearray.fromhex(kwargs['recipient_address']).decode()
+            print(recipient_address)
         except Exception:
             return errors.incorrectArguments("The recipient's address must be encoded in HEX format")
         try:

@@ -544,8 +544,8 @@ Success <HTTP 200>:
 	[
 		{
 			id: <Integer>,
-			created: <Date>,
 			content: <String>,
+      recipient_address: <String>,
 			sender_registration_id: <Integer>,
 			sender_address: <String>
 		},
