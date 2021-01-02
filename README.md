@@ -51,6 +51,12 @@ Local development using sqlite can easily be initiated using:
 <!-- Install MySql -->
 brew install mysql
 pip3 install mysqlclient
+brew install postgresql
+brew install openssl
+brew install pkg-config libffi
+pip install cffi
+export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/opt/openssl/lib/
+pip3 install psycopg2
 <!-- Set up VirtualEnv -->
 virtualenv -p python3 .env
 source .env/bin/activate

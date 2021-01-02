@@ -173,9 +173,9 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.ScopedRateThrottle',
     ),
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '3/hour',
-        'user': '1000/day',
-        'pre_keyBundle': '3/day'
+        'anon': '50/hour',
+        'user': '10000/day',
+        'pre_keyBundle': '500/day'
     },
     # Versioning
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
