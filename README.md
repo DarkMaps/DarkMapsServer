@@ -544,13 +544,19 @@ Success <HTTP 200>:
 	[
 		{
 			id: <Integer>,
-			content: <String>,
+			content: <String in JSON format as shown below>,
       recipient_address: <String>,
 			sender_registration_id: <Integer>,
 			sender_address: <String>
 		},
 		...
 	]
+
+JSON Content String:
+  {
+  	registration_id: <Integer - The recipient's registration ID>,
+  	content: <Sring - The actual message content>
+  }
 
 Errors:
 	Incorrect arguments provided:
