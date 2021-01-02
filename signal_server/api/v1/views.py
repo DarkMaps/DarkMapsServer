@@ -246,7 +246,7 @@ class UserPreKeys(APIView):
             # Check correct arguments provided
             if 'requestedDeviceregistration_id' not in kwargs:
                 return errors.incorrectArguments("The request URL must include the user's own registration ID")
-            if not (hasattr(request, "data") & isinstance(request.data, list) & len(request.data) > 0):
+            if not ((hasattr(request, "data")) & (isinstance(request.data, list)) & (len(request.data) > 0)):
                 return errors.incorrectArguments("The request body must be in list format and have a length of at least one.")
 
              # Check device exists and owned by user
@@ -259,7 +259,10 @@ class UserPreKeys(APIView):
 
             newPreKeys = request.data
 
+            print(newPreKeys)
+
             for x in newPreKeys:
+                print(x)
                 serializer = PreKeySerializer(data=x, context={'user': user, 'registration_id': user.device.registration_id})
 
                 if not serializer.is_valid():
