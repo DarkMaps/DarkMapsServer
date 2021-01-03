@@ -16,9 +16,9 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Uncomment below to use local .environment file
-# from dotenv import load_dotenv
-# print(os.path.join(BASE_DIR, ".env"))
-# load_dotenv(os.path.join(BASE_DIR, ".environment"))
+from dotenv import load_dotenv
+print(os.path.join(BASE_DIR, ".env"))
+load_dotenv(os.path.join(BASE_DIR, ".environment"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -208,10 +208,7 @@ DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'auth/password/reset/confirm{uid}/{token}',
     'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
     'SEND_ACTIVATION_EMAIL': True,
-    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
-    'PERMISSIONS': {
-        'password_reset': ['rest_framework.permissions.AllowAny'],
-    }
+    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token'
 }
 
 # Email
@@ -225,6 +222,7 @@ EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', None)
 EMAIL_TIMEOUT = os.environ.get('EMAIL_TIMEOUT', None)
 EMAIL_SSL_KEYFILE = os.environ.get('EMAIL_SSL_KEYFILE', None)
 EMAIL_SSL_CERTFILE = os.environ.get('EMAIL_SSL_CERTFILE', None)
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'webmaster@localhost')
 
 # Trench (For 2FA)
 TRENCH_AUTH = {
