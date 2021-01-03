@@ -14,5 +14,5 @@ mydatabase
 /.env/pyvenv.cfg
 /.env/.venv
 /.env/pip-selfcheck.json
-/yaml/simplesignal-secrets
+/yaml/simplesignal_secrets
 /env

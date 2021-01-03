@@ -6,3 +6,4 @@ data:
   DJANGO_ALLOWED_HOSTS: "www.simplesignal.co.uk"
   STATIC_ENDPOINT_URL: "https://simplesignal.fra1.digitaloceanspaces.com"
   STATIC_BUCKET_NAME: "simplesignal"
+  EMAIL_BACKEND: "django.core.mail.backends.smtp.EmailBackend"
