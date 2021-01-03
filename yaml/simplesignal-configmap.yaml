@@ -7,3 +7,5 @@ data:
   STATIC_ENDPOINT_URL: "https://simplesignal.fra1.digitaloceanspaces.com"
   STATIC_BUCKET_NAME: "simplesignal"
   EMAIL_BACKEND: "django.core.mail.backends.smtp.EmailBackend"
+  2FA_FROM_EMAIL: "admin@dark-maps.com"
+  2FA_APPLICATION_NAME: "Dark Maps"

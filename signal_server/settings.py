@@ -15,6 +15,10 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+from dotenv import load_dotenv
+print(os.path.join(BASE_DIR, ".env"))
+load_dotenv(os.path.join(BASE_DIR, ".environment"))
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -201,7 +205,12 @@ CORS_ALLOW_HEADERS = (
 
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'auth/password/reset/confirm{uid}/{token}',
-    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token'
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
+    'SEND_ACTIVATION_EMAIL': True,
+    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
+    'PERMISSIONS': {
+        'password_reset': ['rest_framework.permissions.AllowAny'],
+    }
 }
 
 # Email

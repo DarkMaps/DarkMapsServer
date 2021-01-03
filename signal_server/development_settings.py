@@ -27,6 +27,8 @@ DATABASES = {
     }
 }
 
+PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND = True
+
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {
