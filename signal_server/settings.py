@@ -15,9 +15,10 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-from dotenv import load_dotenv
-print(os.path.join(BASE_DIR, ".env"))
-load_dotenv(os.path.join(BASE_DIR, ".environment"))
+# Uncomment below to use local .environment file
+# from dotenv import load_dotenv
+# print(os.path.join(BASE_DIR, ".env"))
+# load_dotenv(os.path.join(BASE_DIR, ".environment"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
