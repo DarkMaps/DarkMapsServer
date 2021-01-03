@@ -15,4 +15,4 @@ ENV PATH /env/bin:$PATH
 
 EXPOSE 8000
 
-CMD ["python" "manage.py" "runserver"]
+CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "signal_server.wsgi:application"]
