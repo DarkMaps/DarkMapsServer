@@ -16,3 +16,6 @@ Updating secrets / ConfigMap
 - kubectl apply -f simplesignal-configmap.yaml
 - kubectl delete secret simplesignal-secret
 - kubectl create secret generic simplesignal-secret --from-env-file=simplesignal-secrets
+
+Restarting / Forcing Docker re-pull
+- kubectl rollout restart deployment simplesignal-app

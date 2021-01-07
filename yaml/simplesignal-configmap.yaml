@@ -9,3 +9,4 @@ data:
   EMAIL_BACKEND: "django.core.mail.backends.smtp.EmailBackend"
   2FA_FROM_EMAIL: "admin@dark-maps.com"
   2FA_APPLICATION_NAME: "Dark Maps"
+  DEFAULT_FROM_EMAIL: "admin@dark-maps.com"

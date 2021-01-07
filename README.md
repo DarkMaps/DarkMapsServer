@@ -169,6 +169,9 @@ Using this container safely in production may require the following environment 
 ​		By default only a local cache will be used. This means that in a  rate limiting will not perform correctly, as each
 
 
+## Setting the site name and domain
+
+The Sites framework is used to correctly set urls and verbose names in emails. To set these variables create a super user, log into the admin site at "<URL>/admin/" then set the site details.
 
 ---
 
