@@ -15,11 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Uncomment below to use local .environment file
-# from dotenv import load_dotenv
-# print(os.path.join(BASE_DIR, ".env"))
-# load_dotenv(os.path.join(BASE_DIR, ".environment"))
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -28,6 +23,8 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 's!c24+@++wmf)0k*r9$d@y=^(l@5t6
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+
+SITE_NAME = os.environ.get('SITE_NAME', 'example.com')
 
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'db 127.0.0.1').split()
 
@@ -66,11 +63,11 @@ MIDDLEWARE = [
 # Common middleware settings
 APPEND_SLASH = False
 
-# Security middleware settings - EXTREMELY INSECURE
+# Security middleware settings
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_HSTS_SECONDS = 3600
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_SSL_REDIRECT = False
+SECURE_SSL_REDIRECT = True
 X_FRAME_OPTIONS = 'DENY'
 
 ROOT_URLCONF = 'signal_server.urls'
@@ -104,9 +101,16 @@ DATABASES = {
         'USER': os.environ.get('DATABASE_USER', 'root'),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'sadkjghlwh498jksdghlk4wtywaeuht98434'),
         'HOST': os.environ.get('DATABASE_HOST', 'db'),
-        'PORT': os.environ.get('DATABASE_PORT', 3306)
+        'PORT': os.environ.get('DATABASE_PORT', 3306),
+        'OPTIONS': {
+            'sslmode': os.environ.get('DATABASE_SSLMODE', 'require')
+        },
     }
 }
+DATABASE_CERT = os.environ.get('DATABASE_CERT_NAME', None)
+if DATABASE_CERT != None:
+    DATABASES['default']['OPTIONS']['sslrootcert'] = os.path.join(BASE_DIR, DATABASE_CERT)
+
 
 
 # Password validation

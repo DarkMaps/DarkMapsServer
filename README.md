@@ -49,8 +49,6 @@ Local development using sqlite can easily be initiated using:
 **Note:** This requires the python environment to have been correctly set up previously, typically using a virtual environment. MySql and mysqlclient must be available for the virtualenv install to be successful. For example:
 ```
 <!-- Install MySql -->
-brew install mysql
-pip3 install mysqlclient
 brew install postgresql
 brew install openssl
 brew install pkg-config libffi
@@ -96,7 +94,12 @@ Using this container safely in production may require the following environment 
 
 
 
+### 		Site Name
+​		Used to properly label emails
 
+```
+- SITE_NAME
+```
 
 ### 		Django Secret
 ​		Set this by passing an environment variable to your container as
@@ -123,6 +126,13 @@ Using this container safely in production may require the following environment 
 
 ​		This is essential. Leaving the default user and password in place is a major security risk.
 
+The following are optional if you wish to use CA Certificates
+
+```
+- DATABASE_SSLMODE
+- DATABASE_CERT_NAME
+```
+
 
 
 ### 		Email
@@ -142,6 +152,8 @@ Using this container safely in production may require the following environment 
 ```
 
 ​		This is essential in production to allow password reset emails to be sent.
+
+  NB: To properly format the reset password emails you must also create a super user, log in to the admin site and edit the 'Sites' configuration.
 
 
 

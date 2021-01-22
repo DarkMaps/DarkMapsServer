@@ -3,6 +3,7 @@
 *.pyc
 mydatabase
 .vscode
+*.crt
 /.env
 /.env/.Python
 /.env/[Bb]in
