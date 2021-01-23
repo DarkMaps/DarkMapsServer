@@ -152,14 +152,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
-
-# Moving static assets to DigitalOcean Spaces as per:
-# https://www.digitalocean.com/community/tutorials/how-to-set-up-object-storage-with-django
 AWS_ACCESS_KEY_ID = os.getenv('STATIC_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('STATIC_SECRET_KEY')
 
 AWS_STORAGE_BUCKET_NAME = os.getenv('STATIC_BUCKET_NAME')
-AWS_S3_ENDPOINT_URL = os.getenv('STATIC_ENDPOINT_URL')
+AWS_S3_REGION_NAME = os.getenv('STATIC_REGION_NAME')
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
@@ -169,7 +167,7 @@ AWS_QUERYSTRING_AUTH = False
 
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-STATIC_URL = '{}/{}/'.format(AWS_S3_ENDPOINT_URL, AWS_LOCATION)
+STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 STATIC_ROOT = 'static/'
 
 # Rest framework
