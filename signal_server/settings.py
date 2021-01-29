@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from boto3.session import Session
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -275,3 +276,41 @@ if os.environ.get('MEMCACHE_LOCATION', False):
     CACHES = memcache_settings
 else:
     CACHES = local_cache_settings
+
+
+CLOUDWATCH_AWS_ID = os.environ.get('CLOUDWATCH_AWS_ID', None)
+CLOUDWATCH_AWS_KEY = os.environ.get('CLOUDWATCH_AWS_KEY', None)
+CLOUDWATCH_AWS_DEFAULT_REGION = os.environ.get('CLOUDWATCH_AWS_DEFAULT_REGION', None)
+if CLOUDWATCH_AWS_ID != None:
+    logger_boto3_session = Session(
+        aws_access_key_id=CLOUDWATCH_AWS_ID,
+        aws_secret_access_key=CLOUDWATCH_AWS_KEY,
+        region_name=CLOUDWATCH_AWS_DEFAULT_REGION,
+    )
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "aws": {
+                "format": "%(asctime)s [%(levelname)-8s] %(message)s [%(pathname)s:%(lineno)d]",
+                "datefmt": "%Y-%m-%d %H:%M:%S",
+            },
+        },
+        "handlers": {
+            "watchtower": {
+                "level": "INFO",
+                "class": "watchtower.CloudWatchLogHandler",
+                # From step 2
+                "boto3_session": logger_boto3_session,
+                "log_group": "DarkMaps",
+                # Different stream for each environment
+                "stream_name": f"Lightsail",
+                "formatter": "aws",
+            },
+            "console": {"class": "logging.StreamHandler", "formatter": "aws",},
+        },
+        "loggers": {
+            # Use this logger to send data just to Cloudwatch
+            "watchtower": {"level": "INFO", "handlers": ["watchtower"], "propogate": False,}
+        },
+    }
