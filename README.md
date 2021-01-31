@@ -181,7 +181,20 @@ The following are optional if you wish to use CA Certificates
 ​		By default only a local cache will be used. This means that in a  rate limiting will not perform correctly, as each
 
 
-## Setting the site name and domain
+
+### Logging
+
+​	The server can be set up to pass logs to Cloudwatch using the following environment variables
+
+```
+- CLOUDWATCH_AWS_ID
+- CLOUDWATCH_AWS_KEY
+- CLOUDWATCH_AWS_DEFAULT_REGION
+```
+
+
+
+## Setting the site name and domain for emails
 
 The Sites framework is used to correctly set urls and verbose names in emails. To set these variables create a super user, log into the admin site at "<URL>/admin/" then set the site details.
 
