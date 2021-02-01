@@ -140,7 +140,7 @@ class MessageList(APIView):
         if 'requestedDeviceregistration_id' not in kwargs:
             logger.error(f"[Delete Message] [Error - Incorrect arguments]")
             return errors.incorrectArguments("The request URL must include the user's own registration ID.")
-        if not (hasattr(request, "data") & isinstance(request.data, list) & len(request.data) > 0):
+        if not (hasattr(request, "data") and isinstance(request.data, list) and len(request.data) > 0):
             logger.error(f"[Delete Message] [Error - Incorrect arguments]")
             return errors.incorrectArguments("The request body must include the message IDs to be deleted in list format.")
 

@@ -52,7 +52,7 @@ class MessageTestCase(TestCase):
             public_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             signature='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
         )
-        # Create test message from user 2 to user 1
+        # Create test messages from user 2 to user 1
         Message.objects.create(
             recipient=self.device1,
             content='{"registration_id": 1234, "content": "test"}',
@@ -84,7 +84,13 @@ class MessageTestCase(TestCase):
 
     def test_delete_message(self):
         """Messages can be deleted"""
-        response = self.client.delete('/v1/1234/messages/', [1], format='json')
+        Message.objects.create(
+            recipient=self.device1,
+            content='{"registration_id": 1234, "content": "test2"}',
+            sender_registration_id=5678,
+            sender_address='test2.1'
+        )
+        response = self.client.delete('/v1/1234/messages/', [1, 2], format='json')
         self.user1.refresh_from_db()
         self.assertEqual(self.user1.device.received_messages.count(), 0)
         self.assertEqual(response.status_code, 200)
