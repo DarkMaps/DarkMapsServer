@@ -20,6 +20,11 @@ no_device = Response({
     "message": "User has not yet registered a device"
 }, status=status.HTTP_404_NOT_FOUND)
 
+no_recipient_user = Response({
+    "code": "no_recipient_user",
+    "message": "Recipient does not exist"
+}, status=status.HTTP_404_NOT_FOUND)
+
 no_recipient_device = Response({
     "code": "no_recipient_device",
     "message": "Recipient has not yet registered a device"

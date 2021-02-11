@@ -17,7 +17,7 @@ class PrekeysTestCase(TestCase):
         self.client.force_authenticate(user=self.user1)
         self.device1 = Device.objects.create(
             user=self.user1,
-            address='test1.1',
+            address='testuser1@test.com.1',
             identity_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             registration_id=1234
         )
@@ -31,7 +31,7 @@ class PrekeysTestCase(TestCase):
         self.user2 = User.objects.create_user(email='testuser2@test.com', password='12345')
         self.device2 = Device.objects.create(
             user=self.user2,
-            address='test2.1',
+            address='testuser2@test.com.1',
             identity_key='abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd',
             registration_id=5678
         )
@@ -51,7 +51,7 @@ class PrekeysTestCase(TestCase):
 
     def test_get_prekey_bundle(self):
         """A correctly formatted prekey bundle can be obtained"""
-        response = self.client.get('/v1/prekeybundles/74657374322e31/1234/', format='json')
+        response = self.client.get('/v1/prekeybundles/74657374757365723240746573742e636f6d2e31/1234/', format='json')
         self.user2.refresh_from_db()
         self.assertEqual(self.user2.device.prekey_set.count(), 0)
         self.assertEqual(response.status_code, 200)
@@ -60,7 +60,7 @@ class PrekeysTestCase(TestCase):
         self.assertEqual('registration_id' in response.data, True)
         self.assertEqual('pre_key' in response.data, True)
         self.assertEqual('signed_pre_key' in response.data, True)
-        self.assertEqual(response.data['address'], 'test2.1')
+        self.assertEqual(response.data['address'], 'testuser2@test.com.1')
         self.assertEqual(response.data['identity_key'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
         self.assertEqual(response.data['registration_id'], 5678)
         self.assertEqual(response.data['pre_key']['key_id'], 1)
@@ -72,14 +72,14 @@ class PrekeysTestCase(TestCase):
     def test_get_prekey_bundle_no_prekeys(self):
         """When no prekeys are available a correctly formatted prekey undle can still be obtained"""
         self.client.force_authenticate(user=self.user2)
-        response = self.client.get('/v1/prekeybundles/74657374312e31/5678/', format='json')
+        response = self.client.get('/v1/prekeybundles/74657374757365723140746573742e636f6d2e31/5678/', format='json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual('address' in response.data, True)
         self.assertEqual('identity_key' in response.data, True)
         self.assertEqual('registration_id' in response.data, True)
         self.assertEqual('pre_key' in response.data, False)
         self.assertEqual('signed_pre_key' in response.data, True)
-        self.assertEqual(response.data['address'], 'test1.1')
+        self.assertEqual(response.data['address'], 'testuser1@test.com.1')
         self.assertEqual(response.data['identity_key'], 'abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
         self.assertEqual(response.data['registration_id'], 1234)
         self.assertEqual(response.data['signed_pre_key']['key_id'], 1)
@@ -97,7 +97,7 @@ class PrekeysTestCase(TestCase):
     def test_get_prekey_bundle_no_sender_device(self):
         """When the user does not have a device to create the bundle from an error is returned"""
         self.client.force_authenticate(user=self.user3)
-        response = self.client.get('/v1/prekeybundles/74657374322e31/1234/', format='json')
+        response = self.client.get('/v1/prekeybundles/74657374757365723240746573742e636f6d2e31/1234/', format='json')
         self.user2.refresh_from_db()
         self.assertEqual(self.user2.device.prekey_set.count(), 1)
         self.assertEqual(response.status_code, 404)
@@ -105,29 +105,35 @@ class PrekeysTestCase(TestCase):
 
     def test_get_prekey_bundle_no_recipient_device(self):
         """When the user does not have a device to create the bundle from an error is returned"""
-        response = self.client.get('/v1/prekeybundles/74657374332e31/1234/', format='json')
+        response = self.client.get('/v1/prekeybundles/74657374757365723340746573742e636f6d2e31/1234/', format='json')
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data['code'], 'no_recipient_device')
 
     def test_get_prekey_bundle_changed_identity(self):
         """A changed local identity results in an error"""
-        response = self.client.get('/v1/prekeybundles/74657374322e31/1235/', format='json')
+        response = self.client.get('/v1/prekeybundles/74657374757365723240746573742e636f6d2e31/1235/', format='json')
         self.user2.refresh_from_db()
         self.assertEqual(self.user2.device.prekey_set.count(), 1)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data['code'], 'device_changed')
 
+    def test_get_prekey_bundle_recipient_user_does_not_exist(self):
+        """Requesting a prekey for a user that does not exist fails correctly"""
+        response = self.client.get('/v1/prekeybundles/74657374757365723440746573742e636f6d2e31/1234/', format='json')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data['code'], 'no_recipient_user')
+
     def test_put_prekey_bundle(self):
         """The /prekeybundle PUT method should fail"""
-        response = self.client.put('/v1/prekeybundles/74657374322e31/1235/', {}, format='json')
+        response = self.client.put('/v1/prekeybundles/74657374757365723240746573742e636f6d2e31/1235/', {}, format='json')
         self.assertEqual(response.status_code, 405)
 
     def test_post_prekey_bundle(self):
         """The /prekeybundle POST method should fail"""
-        response = self.client.post('/v1/prekeybundles/74657374322e31/1235/', {}, format='json')
+        response = self.client.post('/v1/prekeybundles/74657374757365723240746573742e636f6d2e31/1235/', {}, format='json')
         self.assertEqual(response.status_code, 405)
 
     def test_delete_prekey_bundle(self):
         """The /prekeybundle POST method should fail"""
-        response = self.client.delete('/v1/prekeybundles/74657374322e31/1235/', format='json')
+        response = self.client.delete('/v1/prekeybundles/74657374757365723240746573742e636f6d2e31/1235/', format='json')
         self.assertEqual(response.status_code, 405)
