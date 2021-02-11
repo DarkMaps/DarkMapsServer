@@ -106,7 +106,7 @@ class MessageList(APIView):
             recipientUser = userModel.objects.get(email=recipientEmail)
         except Exception:
             logger.error(f"[Post Messages] [Error - Recipient doesn't exist]")
-            return errors.no_recipient
+            return errors.no_recipient_user
 
         # Check recipient device exists
         if not hasattr(recipientUser, "device"):
@@ -280,20 +280,13 @@ class PreKeyBundleView(APIView):
         except Exception:
             logger.error(f"[Get Prekey Bundle] [Error - Unable to decode hex]")
             return errors.incorrectArguments("The recipient's address must be encoded in HEX format")
-        print("Trying to find user:")
-        print(recipient_address)
         try:
             email = recipient_address.rpartition('.')[0]
-            print(email)
             User = get_user_model()
             user = User.objects.get(email=email)
-            print(user)
         except Exception as e:
-            print("Failed")
-            print(e)
             logger.error(f"[Get Prekey Bundle] [Error - Tried to get prekey bundle for non-existant user]")
             return errors.no_recipient_user
-        print("Found user")
         try:
             device = Device.objects.get(address=recipient_address)
         except Exception:

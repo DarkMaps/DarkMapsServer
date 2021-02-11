@@ -548,8 +548,8 @@ Errors:
   Recipient doesn't exist:
   	<HTTP 404>
   	{
-      code: 'no_recipient',
-      message: 'The recipient for your message does not exist'
+      code: 'no_recipient_user',
+      message: 'Recipient does not exist'
   	}
   Recipient doesn't have a registered device
   	<HTTP 404>

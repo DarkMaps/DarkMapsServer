@@ -10,11 +10,6 @@ no_user = Response({
     "message": "User does not exist"
 }, status=status.HTTP_400_BAD_REQUEST)
 
-no_recipient = Response({
-    "code": "no_recipient",
-    "message": "The recipient for your message does not exist"
-}, status=status.HTTP_404_NOT_FOUND)
-
 no_device = Response({
     "code": "no_device",
     "message": "User has not yet registered a device"

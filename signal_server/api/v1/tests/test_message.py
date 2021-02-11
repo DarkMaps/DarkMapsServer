@@ -108,7 +108,7 @@ class MessageTestCase(TestCase):
         self.assertEqual(self.user1.device.received_messages.count(), 1)
         self.assertEqual(self.user2.device.received_messages.count(), 0)
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.data['code'], "no_recipient")
+        self.assertEqual(response.data['code'], "no_recipient_user")
 
     def test_incorrectly_formatted_email_message(self):
         """Messages with an incorrectly formatted recipient email are rejected"""
