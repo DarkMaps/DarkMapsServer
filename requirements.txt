@@ -14,7 +14,7 @@ django-storages==1.10.1
 django-templated-mail==1.1.1
 django-trench==0.2.2
 django-username-email==2.2.4
-djangorestframework==3.9.1
+djangorestframework==3.11.2
 djangorestframework-simplejwt==4.6.0
 djoser==1.7.0
 docutils==0.15.2
