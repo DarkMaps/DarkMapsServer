@@ -16,7 +16,7 @@ django-trench==0.2.2
 django-username-email==2.2.4
 djangorestframework==3.11.2
 djangorestframework-simplejwt==4.6.0
-djoser==1.7.0
+djoser==2.1.0
 docutils==0.15.2
 ecdsa==0.14.1
 future==0.18.2
