@@ -31,7 +31,6 @@ psycopg2==2.8.6
 psycopg2-binary==2.8.6
 pyasn1==0.4.8
 pycparser==2.19
-Pygments==2.2.0
 PyJWT==1.7.1
 pyotp==2.2.7
 PySocks==1.7.0
