@@ -10,7 +10,7 @@ This repository contains a simple server providing REST API calls to manage a me
 
 
 
-**DISCLAIMER - This project has no relation to the Signal Foundation or Signal app. It is intended for testing purposes only, and has not been tested at any point for security**
+**DISCLAIMER - This project has no relation to Whisper Systems, the Signal Foundation or Signal app. It is intended for testing purposes only, and has not been tested at any point for security**
 
 
 
@@ -18,11 +18,11 @@ This repository contains a simple server providing REST API calls to manage a me
 
 ## Index
 
-- [TODO](#todo)
+- [Installation](#installation)
 
 - [Local Development](#local-development)
 
-- [Starting the server using docker swarm](#starting-the-server-using-docker-swarm)
+- [Testing](#testing)
 
 - [Using In Production](#using-in-production)
 
@@ -34,21 +34,19 @@ This repository contains a simple server providing REST API calls to manage a me
   - [Messages](#messages)
   - [Keys](#keys)
 
+- [Testing Environment Variables](#testing-environment-variables)
+
 
 
 ---
 
 
 
-## Local Development
-Local development using sqlite can easily be initiated using:
-```
-./development.sh
-```
+## Installation
 
-**Note:** This requires the python environment to have been correctly set up previously, typically using a virtual environment. MySql and mysqlclient must be available for the virtualenv install to be successful. For example:
+**Note:** This requires the python environment to have been correctly set up previously, typically using a virtual environment. Postgresql and psycopg2 must be available to the virtualenv. For example:
 ```
-<!-- Install MySql -->
+<!-- Install Postgresql -->
 brew install postgresql
 brew install openssl
 brew install pkg-config libffi
@@ -61,26 +59,34 @@ source .env/bin/activate
 pip install -r requirements.txt
 ```
 
-
+Below, for clarity, are the packages installed by requirements.txt.
+```
+pip install django==2.2.18
+pip install pip install djangorestframework==3.11.2
+pip install django-trench==0.2.2
+pip install boto3==1.14.41
+pip install djoser==2.1.0
+pip install django-cors-headers==2.4.0
+pip install django-username-email==2.2.4
+```
 
 ---
 
+## Local Development
+Local development using an example sqlite database can easily be initiated using:
+```
+./development.sh
+```
+To access the settings used when executing /.development.sh use the following flag.
+```
+--settings=signal_server.development_settings
+```
 
 
 ## Testing
 Automated tests can be initiated using:
 ```
 ./test.sh
-```
-
----
-
-
-## Making Migrations
-
-Due to the default database settings when making migrations in development use the following command
-```
-./manage.py makemigrations api --settings=signal_server.development_settings
 ```
 
 
@@ -819,4 +825,11 @@ Errors:
      	code: 'device_changed',
       message: 'Own device has changed'
   	}
+```
+
+## Testing Environment Variables
+
+Test environment variables locally using the following command. Create a file named `.environment` to set the environment variables.
+```
+./development-using-dot-env.sh
 ```
