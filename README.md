@@ -2,7 +2,7 @@
 
 
 
->> A server for the signal protocol
+>> A server for the Dark Maps project
 
 
 
@@ -79,7 +79,7 @@ Local development using an example sqlite database can easily be initiated using
 ```
 To access the settings used when executing /.development.sh use the following flag.
 ```
---settings=signal_server.development_settings
+--settings=dark_maps.development_settings
 ```
 
 

@@ -1,5 +1,5 @@
 # Start Gunicorn processes
 echo Starting Gunicorn.
-exec gunicorn signal_server.wsgi:application \
+exec gunicorn dark_maps.wsgi:application \
     --bind 0.0.0.0:8000 \
     --workers 3
