@@ -92,6 +92,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'dark_maps.wsgi.application'
+DEFAULT_AUTO_FIELD='django.db.models.AutoField' 
 
 
 # Database
