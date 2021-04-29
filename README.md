@@ -61,13 +61,13 @@ pip install -r requirements.txt
 
 Below, for clarity, are the packages installed by requirements.txt.
 ```
-pip install django==2.2.18
-pip install pip install djangorestframework==3.11.2
+pip install django==3.2.1
+pip install djangorestframework==3.12.4
 pip install django-trench==0.2.2
 pip install boto3==1.14.41
 pip install djoser==2.1.0
-pip install django-cors-headers==2.4.0
-pip install django-username-email==2.2.4
+pip install django-cors-headers==3.7.0
+pip install django-username-email==2.4.2
 ```
 
 ---
