@@ -168,8 +168,8 @@ The following are optional if you wish to use CA Certificates
 ​	The following environment variables alter the action of the 2FA manager. See [Django Trench Docs](https://django-trench.readthedocs.io/en/latest/settings.html)
 
 ```
-- 2FA_FROM_EMAIL
-- 2FA_APPLICATION_NAME
+- TWO_FACTOR_FROM_EMAIL
+- TWO_FACTOR_APPLICATION_NAME
 ```
 
 ​		These settings are not essential, but will improve the appearance of the 2FA flow for your users.

@@ -92,7 +92,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'dark_maps.wsgi.application'
-DEFAULT_AUTO_FIELD='django.db.models.AutoField' 
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 
 
 # Database
@@ -163,6 +163,7 @@ AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
+AWS_S3_ENDPOINT_URL = os.getenv('STATIC_URL')
 AWS_LOCATION = 'static'
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_AUTH = False
@@ -236,12 +237,12 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'webmaster@localhost')
 
 # Trench (For 2FA)
 TRENCH_AUTH = {
-    'FROM_EMAIL': os.environ.get('2FA_FROM_EMAIL', "your@email.com"),
+    'FROM_EMAIL': os.environ.get('TWO_FACTOR_FROM_EMAIL', "your@email.com"),
     'BACKUP_CODES_LENGTH': 20,  # keep (quantity * length) under 200
     'CONFIRM_DISABLE_WITH_CODE': True,
     'CONFIRM_BACKUP_CODES_REGENERATION_WITH_CODE': True,
     'ALLOW_BACKUP_CODES_REGENERATION': True,
-    'APPLICATION_ISSUER_NAME': os.environ.get('2FA_APPLICATION_NAME', "myApplication"),
+    'APPLICATION_ISSUER_NAME': os.environ.get('TWO_FACTOR_APPLICATION_NAME', "myApplication"),
     'MFA_METHODS': {
         'email': {
             'VERBOSE_NAME': 'email',
