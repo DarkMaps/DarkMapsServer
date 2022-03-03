@@ -10,6 +10,13 @@ from .settings import *
 
 DEBUG = True
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
+    }
+}
+
 ALLOWED_HOSTS = "*"
 
 SECURE_SSL_REDIRECT = False
