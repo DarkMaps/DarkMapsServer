@@ -23,7 +23,7 @@ v1_urlpatterns = [
     url(r'^auth/', include('trench.urls.djoser')),  # for Token Based Authorization
     # Note reuest password reset API endpoint:
     # POST /v1/auth/users/reset_password/ with {"email": "requested email body"}
-    url(r'auth/password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html',success_url='/v1/auth/password/reset/complete/')),
+    url(r'auth/password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,35})/$', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html',success_url='/v1/auth/password/reset/complete/')),
     url(r'auth/password/reset/complete/',auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html')),
 
 ]
