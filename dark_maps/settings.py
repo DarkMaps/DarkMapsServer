@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 's!c24+@++wmf)0k*r9$d@y=^(l@5t6=s5l&hz6mnd8ugoz^an@')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('Debug', False)
 
 SITE_NAME = os.environ.get('SITE_NAME', 'example.com')
 
