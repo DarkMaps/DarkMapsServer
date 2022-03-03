@@ -1,1 +1,1 @@
-web: gunicorn dark_maps.wsgi
+web: python manage.py runserver
