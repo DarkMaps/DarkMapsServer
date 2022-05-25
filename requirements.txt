@@ -41,7 +41,7 @@ psycopg2-binary==2.8.6
 pyasn1==0.4.8
 pycparser==2.19
 pyicloud-ipd==0.10.1
-PyJWT==1.7.1
+PyJWT==2.4.0
 pyotp==2.2.7
 PySocks==1.7.0
 python-dateutil==2.8.1
