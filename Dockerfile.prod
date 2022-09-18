@@ -17,6 +17,6 @@ WORKDIR /app
 ENV VIRTUAL_ENV /env
 ENV PATH /env/bin:$PATH
 
-EXPOSE 8000
+EXPOSE 8080
 
-CMD ["gunicorn", "--worker-tmp-dir", "/dev/shm", "--bind", ":8000", "--workers", "3", "dark_maps.wsgi:application"]
+CMD ["gunicorn", "--worker-tmp-dir", "/dev/shm", "--bind", ":8080", "--workers", "3", "dark_maps.wsgi:application"]

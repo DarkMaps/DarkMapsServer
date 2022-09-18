@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 from boto3.session import Session
 import django_heroku
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -69,7 +70,7 @@ APPEND_SLASH = False
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_HSTS_SECONDS = 3600
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', True)
+SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', False)
 if SECURE_SSL_REDIRECT != True:
     SECURE_SSL_REDIRECT = False
 X_FRAME_OPTIONS = 'DENY'
@@ -99,24 +100,20 @@ DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DATABASE_NAME', 'dark_maps'),
-        'USER': os.environ.get('DATABASE_USER', 'root'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'sadkjghlwh498jksdghlk4wtywaeuht98434'),
-        'HOST': os.environ.get('DATABASE_HOST', 'db'),
-        'PORT': os.environ.get('DATABASE_PORT', 3306),
-        'OPTIONS': {
-            'sslmode': os.environ.get('DATABASE_SSLMODE', 'require')
-        },
-    }
-}
-DATABASE_CERT = os.environ.get('DATABASE_CERT_NAME', None)
-if DATABASE_CERT != None:
-    DATABASES['default']['OPTIONS']['sslrootcert'] = os.path.join(BASE_DIR, DATABASE_CERT)
-
-
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.environ.get('DATABASE_NAME', 'dark_maps'),
+#         'USER': os.environ.get('DATABASE_USER', 'root'),
+#         'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'sadkjghlwh498jksdghlk4wtywaeuht98434'),
+#         'HOST': os.environ.get('DATABASE_HOST', 'db'),
+#         'PORT': os.environ.get('DATABASE_PORT', 3306),
+#         'OPTIONS': {
+#             'sslmode': os.environ.get('DATABASE_SSLMODE', 'disable')
+#         },
+#     }
+# }
+DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -315,6 +312,3 @@ if CLOUDWATCH_AWS_ID != None:
             "watchtower": {"level": "INFO", "handlers": ["watchtower"], "propogate": False,}
         },
     }
-
-# Activate Django-Heroku.
-django_heroku.settings(locals())
